@@ -57,8 +57,6 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 */
 	public function getControl()
 	{
-		$this->tryLoadItems();
-		/** @var $control Html */
 		$control = parent::getControl();
 
 		if ($this->dependentCallback !== NULL) {
@@ -82,6 +80,18 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	}
 
 
+	/**
+	 * This method will be called when the component becomes attached to Form.
+	 * @param  Nette\ComponentModel\IComponent
+	 * @return void
+	 */
+	protected function attached($form)
+	{
+		parent::attached($form);
+		$this->tryLoadItems();
+	}
+
+
 	protected function tryLoadItems()
 	{
 		if ($this->shouldLoadItems()) {
@@ -90,6 +100,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 			foreach ($this->parents as $parent) {
 				$parentsValues[$parent->getName()] = $parent->getValue();
 			}
+
 			$items = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
 
 			if ($items) {
@@ -110,8 +121,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	protected function shouldLoadItems()
 	{
 		foreach ($this->parents as $parent) {
-			//bd($parent);
-			if ($parent->hasErrors() /* || $parent->getValue() === NULL*/) {
+			if ($parent->hasErrors()) {
 				return FALSE;
 			}
 		}
