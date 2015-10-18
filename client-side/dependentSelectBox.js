@@ -56,13 +56,10 @@
 				return false;
 			}
 
-			console.log(signalLink);
-
 			// Send ajax request
 			$.ajax(signalLink, {
 				success: function (payload) {
 					var data = payload.dependentselectbox;
-					console.log(data);
 					if (data !== undefined) {
 						var $select = $('#' + data.id);
 						$select.empty();
@@ -74,7 +71,11 @@
 						}
 
 						if (Object.keys(data.items).length > 0) {
-							//$select.prop('disabled', false);
+
+							if (data.disabledWhenEmpty) {
+								$select.prop('disabled', false);
+							}
+
 							$.each(data.items, function (key, value) {
 								$('<option>')
 									.attr('value', key).text(value)
@@ -82,7 +83,9 @@
 
 							});
 						} else {
-							//$select.prop('disabled', true);
+							if (data.disabledWhenEmpty) {
+								$select.prop('disabled', true);
+							}
 						}
 
 						$select.change();

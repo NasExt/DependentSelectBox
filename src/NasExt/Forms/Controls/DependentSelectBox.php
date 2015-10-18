@@ -40,18 +40,26 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	/** @var callable */
 	private $dependentCallback;
 
+	/** @var  bool */
+	private $disabledWhenEmpty;
 
-	public function __construct($label = NULL, array $parents, callable $dependentCallback)
+
+	/**
+	 * @param string $label
+	 * @param array $parents
+	 * @param callable $dependentCallback
+	 * @param bool $disabledWhenEmpty
+	 */
+	public function __construct($label = NULL, array $parents, callable $dependentCallback, $disabledWhenEmpty = FALSE)
 	{
 		parent::__construct($label);
-		//$this->setDisabled();
 		$this->parents = (array)$parents;
 		$this->dependentCallback = $dependentCallback;
+		$this->disabledWhenEmpty = $disabledWhenEmpty;
 	}
 
 
 	/**
-	 * Generates control's HTML element.
 	 * @return Html
 	 * @throws InvalidStateException
 	 */
@@ -105,14 +113,17 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 			}
 
 			$items = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
-
 			if ($items) {
-				//$this->setDisabled(FALSE);
-				//$this->setOmitted(FALSE);
+				if ($this->disabledWhenEmpty == TRUE) {
+					$this->setDisabled(FALSE);
+					$this->setOmitted(FALSE);
+				}
 				$this->loadHttpData();
 				$this->setItems($items);
 			} else {
-				//$this->setDisabled();
+				if ($this->disabledWhenEmpty == TRUE) {
+					$this->setDisabled();
+				}
 			}
 		}
 	}
@@ -143,6 +154,10 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	}
 
 
+	/**
+	 * @param string $signal
+	 * @throws \Nette\InvalidStateException
+	 */
 	public function signalReceived($signal)
 	{
 		/** @var Presenter $presenter */
@@ -163,6 +178,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 				'id' => $this->getHtmlId(),
 				'items' => $items,
 				'prompt' => $this->getPrompt(),
+				'disabledWhenEmpty' => $this->disabledWhenEmpty,
 			);
 
 			$presenter->sendPayload();
@@ -187,11 +203,12 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 * @param string $label
 	 * @param array $parents
 	 * @param callable $dependentCallback
+	 * @param bool $disabledWhenEmpty
 	 * @return DependentSelectBox provides fluent interface
 	 */
-	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback)
+	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback, $disabledWhenEmpty = FALSE)
 	{
-		$container[$name] = new self($label, $parents, $dependentCallback);
+		$container[$name] = new self($label, $parents, $dependentCallback, $disabledWhenEmpty);
 		return $container[$name];
 	}
 }
