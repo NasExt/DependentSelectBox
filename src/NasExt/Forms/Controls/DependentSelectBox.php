@@ -88,7 +88,10 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	protected function attached($form)
 	{
 		parent::attached($form);
-		$this->tryLoadItems();
+
+		if ($form instanceof \Nette\Forms\Form) {
+			$this->tryLoadItems();
+		}
 	}
 
 
