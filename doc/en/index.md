@@ -35,9 +35,12 @@ $('[data-dependentselectbox]').dependentSelectBox();
 ```
 
 ## Usage
+![Alt text](form.png?raw=true "Don't remember!")
 
 How to use DependentSelectBox in form:
 ````php
+	$form = new Form($this, $name); // required for full running
+
 	$form->addDependentSelectBox('name', 'Label', array(dependent form controls), function ($values) use () {
 				return array(items);
 			})
