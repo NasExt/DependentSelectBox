@@ -43,6 +43,9 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	/** @var  bool */
 	private $disabledWhenEmpty;
 
+	/** @var  mixed */
+	private $tempValue;
+
 
 	/**
 	 * @param string $label
@@ -52,10 +55,10 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 */
 	public function __construct($label = NULL, array $parents, callable $dependentCallback, $disabledWhenEmpty = FALSE)
 	{
-		parent::__construct($label);
 		$this->parents = (array)$parents;
 		$this->dependentCallback = $dependentCallback;
 		$this->disabledWhenEmpty = $disabledWhenEmpty;
+		parent::__construct($label);
 	}
 
 
@@ -65,6 +68,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 */
 	public function getControl()
 	{
+		$this->tryLoadItems();
 		$control = parent::getControl();
 
 		if ($this->dependentCallback !== NULL) {
@@ -89,6 +93,32 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 
 	/**
+	 * Sets items from which to choose.
+	 * @param  array
+	 * @param  bool
+	 * @return self
+	 */
+	public function setItems(array $items, $useKeys = TRUE)
+	{
+		parent::setItems($items, $useKeys);
+		if ($this->tempValue !== NULL) {
+			parent::setValue($this->tempValue);
+		}
+	}
+
+
+	/**
+	 * Sets selected item (by key).
+	 * @param  scalar
+	 * @return self
+	 */
+	public function setValue($value)
+	{
+		$this->tempValue = $value;
+	}
+
+
+	/**
 	 * This method will be called when the component becomes attached to Form.
 	 * @param  Nette\ComponentModel\IComponent
 	 * @return void
@@ -96,7 +126,6 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	protected function attached($form)
 	{
 		parent::attached($form);
-
 		if ($form instanceof \Nette\Forms\Form) {
 			$this->tryLoadItems();
 		}
