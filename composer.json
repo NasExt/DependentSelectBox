@@ -7,6 +7,9 @@
 	"authors": [
 		{
 			"name": "Dusan Hudak"
+		},
+		{
+			"name": "Jáchym Toušek"
 		}
 	],
 	"require": {

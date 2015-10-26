@@ -7,7 +7,7 @@
 	$.fn.dependentSelectBox = function (options) {
 
 		var dsb = this;
-		dsb.timeout = false;
+		dsb.timeout = [];
 		dsb.settings = $.extend({
 			suggestTimeout: 350,
 			dataLinkName: 'dependentselectbox',
@@ -46,21 +46,23 @@
 		/**
 		 * process
 		 * @param e
-		 * @param childInput
+		 * @param parentElement
 		 */
-		this.process = function (e, childInput) {
+		this.process = function (e, parentElement, dependentSelect) {
 
 			// Validate if signalLink exist
-			var signalLink = dsb.getSignalLink(childInput);
+			var signalLink = dsb.getSignalLink(dependentSelect);
 			if (signalLink == false) {
 				return false;
 			}
 
 			// Send ajax request
 			$.ajax(signalLink, {
+				async: false,
 				success: function (payload) {
 					var data = payload.dependentselectbox;
 					if (data !== undefined) {
+
 						var $select = $('#' + data.id);
 						$select.empty();
 
@@ -77,9 +79,14 @@
 							}
 
 							$.each(data.items, function (key, value) {
-								$('<option>')
-									.attr('value', key).text(value)
-									.appendTo($select);
+								var option = $('<option>')
+									.attr('value', key).text(value);
+
+								if (data.value !== null && key == data.value) {
+									option.attr('selected', true);
+								}
+
+								option.appendTo($select);
 
 							});
 						} else {
@@ -98,49 +105,50 @@
 		/**
 		 * Event onChange
 		 * @param e
-		 * @param childInput
+		 * @param parentElement
 		 * @returns {boolean}
 		 */
-		this.onChange = function (e, childInput) {
-			dsb.process(e, childInput);
+		this.onChange = function (e, parentElement, dependentSelect) {
+			dsb.process(e, parentElement, dependentSelect);
 		};
 
 
 		/**
 		 * Event onKeyup
 		 * @param e
-		 * @param childInput
+		 * @param parentElement
 		 * @returns {boolean}
 		 */
-		this.onKeyup = function (e, childInput) {
+		this.onKeyup = function (e, parentElement, dependentSelect) {
 			// reset timeout
-			if (dsb.timeout != false) clearTimeout(dsb.timeout);
+			var timeoutKey = dependentSelect.attr('id');
+			if (dsb.timeout[timeoutKey] != undefined && dsb.timeout[timeoutKey] != false) {
+				clearTimeout(dsb.timeout[timeoutKey]);
+			}
 
-			dsb.timeout = setTimeout(function () {
-				dsb.process(e, childInput);
-
+			dsb.timeout[timeoutKey] = setTimeout(function () {
+				dsb.process(e, parentElement, dependentSelect);
 			}, dsb.settings.suggestTimeout);
 		};
-
 
 		/**
 		 * Process
 		 */
 		return this.each(function () {
-			var $input = $(this);
+			var $dependentSelect = $(this);
 
-			var parents = $($input).data(dsb.settings.dataParentsName);
+			var parents = $($dependentSelect).data(dsb.settings.dataParentsName);
 			$.each(parents, function (name, id) {
 				var parentElement = $('#' + id);
 
 				if (parentElement.length > 0) {
 					if (parentElement.prop('type') === 'text' || parentElement.prop('nodeName').toLowerCase() === 'textarea') {
 						$(parentElement).on("keyup", function (e) {
-							dsb.onChange(e, $input);
+							dsb.onKeyup(e, $(this), $dependentSelect);
 						});
 					} else {
 						$(parentElement).on("change", function (e) {
-							dsb.onChange(e, $input);
+							dsb.onChange(e, $(this), $dependentSelect);
 						});
 					}
 				}

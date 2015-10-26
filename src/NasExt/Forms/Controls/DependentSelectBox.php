@@ -51,13 +51,11 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 * @param string $label
 	 * @param array $parents
 	 * @param callable $dependentCallback
-	 * @param bool $disabledWhenEmpty
 	 */
-	public function __construct($label = NULL, array $parents, callable $dependentCallback, $disabledWhenEmpty = FALSE)
+	public function __construct($label = NULL, array $parents, callable $dependentCallback)
 	{
 		$this->parents = (array)$parents;
 		$this->dependentCallback = $dependentCallback;
-		$this->disabledWhenEmpty = $disabledWhenEmpty;
 		parent::__construct($label);
 	}
 
@@ -93,17 +91,24 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 
 	/**
-	 * Sets items from which to choose.
-	 * @param  array
-	 * @param  bool
-	 * @return self
+	 * @param bool $value
+	 * @return $this
 	 */
-	public function setItems(array $items, $useKeys = TRUE)
+	public function setDisabledWhenEmpty($value = TRUE)
 	{
-		parent::setItems($items, $useKeys);
-		if ($this->tempValue !== NULL) {
-			parent::setValue($this->tempValue);
-		}
+		$this->disabledWhenEmpty = $value;
+		return $this;
+	}
+
+
+	/**
+	 * Returns selected key.
+	 * @return scalar
+	 */
+	public function getValue()
+	{
+		$this->tryLoadItems();
+		return parent::getValue();
 	}
 
 
@@ -119,15 +124,16 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 
 	/**
-	 * This method will be called when the component becomes attached to Form.
-	 * @param  Nette\ComponentModel\IComponent
-	 * @return void
+	 * Sets items from which to choose.
+	 * @param  array
+	 * @param  bool
+	 * @return self
 	 */
-	protected function attached($form)
+	public function setItems(array $items, $useKeys = TRUE)
 	{
-		parent::attached($form);
-		if ($form instanceof \Nette\Forms\Form) {
-			$this->tryLoadItems();
+		parent::setItems($items, $useKeys);
+		if ($this->tempValue !== NULL) {
+			parent::setValue($this->tempValue);
 		}
 	}
 
@@ -141,7 +147,15 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 				$parentsValues[$parent->getName()] = $parent->getValue();
 			}
 
-			$items = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
+			/** @var DependentSelectBoxData $data */
+			$data = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
+			if (!$data instanceof DependentSelectBoxData) {
+				throw new \Exception('Callback for:"' . $this->getHtmlId() . '" must return DependentSelectBoxData instance!');
+			}
+
+			$items = $data->getItems();
+			$this->setValue($data->getValue() !== NULL ? $data->getValue() : $this->tempValue);
+
 			if ($items) {
 				if ($this->disabledWhenEmpty == TRUE) {
 					$this->setDisabled(FALSE);
@@ -202,10 +216,19 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 				$parentsValues[$parent->getName()] = $presenter->getParameter($parent->getName());
 			}
 
-			$items = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
+			/** @var DependentSelectBoxData $data */
+			$data = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
+			if (!$data instanceof DependentSelectBoxData) {
+				throw new \Exception('Callback for:"' . $this->getHtmlId() . '" must return DependentSelectBoxData instance!');
+			}
+
+			$items = $data->getItems();
+			$value = $data->getValue();
+
 			$presenter->payload->dependentselectbox = array(
 				'id' => $this->getHtmlId(),
 				'items' => $items,
+				'value' => $value,
 				'prompt' => $this->getPrompt(),
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,
 			);
@@ -232,12 +255,11 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 * @param string $label
 	 * @param array $parents
 	 * @param callable $dependentCallback
-	 * @param bool $disabledWhenEmpty
 	 * @return DependentSelectBox provides fluent interface
 	 */
-	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback, $disabledWhenEmpty = FALSE)
+	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback)
 	{
-		$container[$name] = new self($label, $parents, $dependentCallback, $disabledWhenEmpty);
+		$container[$name] = new self($label, $parents, $dependentCallback);
 		return $container[$name];
 	}
 }
