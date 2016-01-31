@@ -132,7 +132,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	public function setItems(array $items, $useKeys = TRUE)
 	{
 		parent::setItems($items, $useKeys);
-		if ($this->tempValue !== NULL) {
+		if ($this->tempValue != NULL) {
 			parent::setValue($this->tempValue);
 		}
 	}
@@ -154,7 +154,16 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 			}
 
 			$items = $data->getItems();
-			$this->setValue($data->getValue() !== NULL ? $data->getValue() : $this->tempValue);
+			if($this->getForm()->isSubmitted()){
+				$value = $this->value;
+			}elseif($this->value != NULL){
+				$value = $this->value;
+			}elseif($this->tempValue != NULL){
+				$value = $this->tempValue;
+			}else{
+				$value = $data->getValue();
+			}
+			$this->setValue($value);
 
 			if ($items) {
 				if ($this->disabledWhenEmpty == TRUE) {
