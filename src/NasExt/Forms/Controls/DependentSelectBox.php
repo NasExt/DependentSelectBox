@@ -45,17 +45,22 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 	/** @var  mixed */
 	private $tempValue;
+	
+	/** @var bool */
+	private $multiple;
 
 
 	/**
 	 * @param string $label
 	 * @param array $parents
 	 * @param callable $dependentCallback
+	 * @param bool $multiple
 	 */
-	public function __construct($label = NULL, array $parents, callable $dependentCallback)
+	public function __construct($label = NULL, array $parents, callable $dependentCallback, $multiple)
 	{
 		$this->parents = (array)$parents;
 		$this->dependentCallback = $dependentCallback;
+		$this->multiple = $multiple;
 		parent::__construct($label);
 	}
 
@@ -68,6 +73,12 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	{
 		$this->tryLoadItems();
 		$control = parent::getControl();
+
+		if ($this->multiple == TRUE) {
+			$control->addAttributes(array(
+				'multiple' => TRUE
+			));
+		}
 
 		if ($this->dependentCallback !== NULL) {
 			$form = $this->getForm();
@@ -266,9 +277,9 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 * @param callable $dependentCallback
 	 * @return DependentSelectBox provides fluent interface
 	 */
-	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback)
+	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback, $multiple = FALSE)
 	{
-		$container[$name] = new self($label, $parents, $dependentCallback);
+		$container[$name] = new self($label, $parents, $dependentCallback, $multiple);
 		return $container[$name];
 	}
 }
