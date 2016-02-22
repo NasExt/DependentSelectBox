@@ -265,7 +265,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	 */
 	public static function register()
 	{
-		Container::extensionMethod('addDependentSelectBox', callback(__CLASS__, 'addDependentSelectBox'));
+		Container::extensionMethod('addDependentSelectBox', array('NasExt\Forms\Controls\DependentSelectBox', 'addDependentSelectBox'));
 	}
 
 
