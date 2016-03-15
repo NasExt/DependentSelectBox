@@ -247,7 +247,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 			$presenter->payload->dependentselectbox = array(
 				'id' => $this->getHtmlId(),
-				'items' => $items,
+				'items' => $this->prepareItems($items),
 				'value' => $value,
 				'prompt' => $this->getPrompt(),
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,
@@ -255,6 +255,23 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 			$presenter->sendPayload();
 		}
+	}
+
+
+	/**
+	 * @param array $items
+	 * @return array
+	 */
+	private function prepareItems($items)
+	{
+		$newItems = array();
+		foreach ($items as $key => $item) {
+			$newItems[] = array(
+				'key' => $key,
+				'value' => $item,
+			);
+		}
+		return $newItems;
 	}
 
 

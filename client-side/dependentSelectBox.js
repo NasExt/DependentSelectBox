@@ -78,11 +78,11 @@
 								$select.prop('disabled', false);
 							}
 
-							$.each(data.items, function (key, value) {
+							$.each(data.items, function (i, item) {
 								var option = $('<option>')
-									.attr('value', key).text(value);
+									.attr('value', item.key).text(item.value);
 
-								if (data.value !== null && key == data.value) {
+								if (data.value !== null && item.key == data.value) {
 									option.attr('selected', true);
 								}
 
