@@ -42,6 +42,9 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 	/** @var  bool */
 	private $disabledWhenEmpty;
+	
+	/** @var bool */
+	protected $disabled;
 
 	/** @var  mixed */
 	private $tempValue;
@@ -111,6 +114,15 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 		return $this;
 	}
 
+	/**
+	 * @param bool $value
+	 * @return $this
+	 */
+	public function setDisabled($value = TRUE)
+	{
+		$this->disabled = $value;
+		return $this;
+	}	
 
 	/**
 	 * Returns selected key.
@@ -177,9 +189,12 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 			$this->setValue($value);
 
 			if ($items) {
-				if ($this->disabledWhenEmpty == TRUE) {
+				if ($this->disabledWhenEmpty == TRUE && $this->disabled !== TRUE) {
 					$this->setDisabled(FALSE);
 					$this->setOmitted(FALSE);
+				}
+				if ($this->disabled == TRUE) {
+					$this->setDisabled(TRUE);
 				}
 				$this->loadHttpData();
 				$this->setItems($items);
