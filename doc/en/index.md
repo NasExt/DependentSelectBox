@@ -26,6 +26,12 @@ Initialization in your `bootstrap.php`:
 NasExt\Forms\Controls\DependentSelectBox::register();
 ```
 
+or enable the extension using your neon config
+```yml
+extensions:
+	dependentSelectBox: NasExt\Forms\DI\DependentSelectBoxExtension
+```
+
 Include from client-side:
 - dependentSelectBox.js
 
