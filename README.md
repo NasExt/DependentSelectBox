@@ -20,5 +20,9 @@ $ composer require nasext/dependent-select-box
 ```
 
 -----
+Documentation
+------------
+
+Learn more in the [documentation](https://github.com/NasExt/DependentSelectBox/blob/master/doc/en/index.md).
 
 Repository [http://github.com/nasext/dependentselectbox](http://github.com/nasext/dependentselectbox).
