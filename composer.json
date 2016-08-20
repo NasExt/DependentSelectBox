@@ -20,7 +20,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"NasExt\\Forms\\Controls\\": "src/"
+			"NasExt\\Forms\\": "src/"
 		}
 	}
 }
