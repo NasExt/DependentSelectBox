@@ -79,14 +79,33 @@
 							}
 
 							$.each(data.items, function (i, item) {
-								var option = $('<option>')
-									.attr('value', item.key).text(item.value);
 
-								if (data.value !== null && item.key == data.value) {
-									option.attr('selected', true);
+								if (typeof item.value === 'object') {
+									var otpGroup = $('<optgroup>')
+										.attr('label', item.key);
+
+									$.each(item.value, function (objI, objItem) {
+										var option = $('<option>')
+											.attr('value', objI).text(objItem);
+										if (data.value !== null && objI == data.value) {
+											option.attr('selected', true);
+										}
+										otpGroup.append(option);
+									});
+									otpGroup.appendTo($select);
+								}
+								else {
+									var option = $('<option>')
+										.attr('value', item.key).text(item.value);
+
+									if (data.value !== null && item.key == data.value) {
+										option.attr('selected', true);
+									}
+
+									option.appendTo($select);
 								}
 
-								option.appendTo($select);
+
 
 							});
 						} else {
