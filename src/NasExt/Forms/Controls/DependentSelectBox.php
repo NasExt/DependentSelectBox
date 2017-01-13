@@ -289,10 +289,19 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	{
 		$newItems = array();
 		foreach ($items as $key => $item) {
-			$newItems[] = array(
-				'key' => $key,
-				'value' => $item,
-			);
+			if ($item instanceof \Nette\Utils\Html) {
+				$newItems[] = array(
+					'key' => $item->getValue(),
+					'value' => $item->getText(),
+					'title' => $item->getTitle(),
+					'disabled' => $item->getDisabled(),
+				);
+			} else {
+				$newItems[] = array(
+					'key' => $key,
+					'value' => $item,
+				);
+			}
 		}
 		return $newItems;
 	}
