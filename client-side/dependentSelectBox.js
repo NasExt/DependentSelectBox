@@ -98,6 +98,14 @@
 									var option = $('<option>')
 										.attr('value', item.key).text(item.value);
 
+									if ('title' in item) {
+										option.attr('title', item.title);
+									}
+
+									if ('disabled' in item) {
+										option.attr('disabled', item.disabled);
+									}
+
 									if (data.value !== null && item.key == data.value) {
 										option.attr('selected', true);
 									}
