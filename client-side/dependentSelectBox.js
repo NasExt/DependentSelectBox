@@ -98,12 +98,10 @@
 									var option = $('<option>')
 										.attr('value', item.key).text(item.value);
 
-									if ('title' in item) {
-										option.attr('title', item.title);
-									}
-
-									if ('disabled' in item) {
-										option.attr('disabled', item.disabled);
+									if ('attributes' in item) {
+										$.each(item.attributes, function (attr, attrValue) {
+											option.attr(attr, attrValue);
+										});
 									}
 
 									if (data.value !== null && item.key == data.value) {
