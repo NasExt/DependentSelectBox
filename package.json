@@ -1,6 +1,6 @@
 {
 	"name": "nas-ext-dependent-select-box",
-	"version": "2.7.1",
+	"version": "2.7.3",
 	"description": "DependentSelectBox for Nette Framework",
 	"keywords": [
 		"nette",
@@ -17,6 +17,6 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/aleswita/DependentSelectBox.git"
+		"url": "git+https://github.com/NasExt/DependentSelectBox.git"
 	}
 }
