@@ -12,6 +12,11 @@
 	"license": "MIT",
 	"main": "client-side/dependentSelectBox.js",
 	"files": [
-		"client-side"
-	]
+		"client-side",
+		"README.md"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aleswita/DependentSelectBox.git"
+	}
 }
