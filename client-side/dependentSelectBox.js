@@ -4,7 +4,16 @@
  */
 
 (function ($) {
-	$.fn.dependentSelectBox = function (options) {
+	$.fn.dependentSelectBox = function (options, listener) {
+
+        var callback = function () {};
+        if(typeof( options ) === 'function' ) {
+            callback = options;
+            options = null;
+        }
+        if(typeof( listener ) === 'function' ) {
+            callback = listener;
+        }
 
 		var dsb = this;
 		dsb.timeout = [];
@@ -122,7 +131,8 @@
 
 						$select.change();
 					}
-				}
+				},
+				complete: callback
 			});
 		};
 
