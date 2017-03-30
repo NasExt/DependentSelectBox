@@ -1,0 +1,22 @@
+{
+	"name": "nas-ext-dependent-select-box",
+	"version": "2.7.3",
+	"description": "DependentSelectBox for Nette Framework",
+	"keywords": [
+		"nette",
+		"nasext",
+		"DependentSelectBox"
+	],
+	"author": "Dusan Hudak",
+	"author": "Jáchym Toušek",
+	"license": "MIT",
+	"main": "client-side/dependentSelectBox.js",
+	"files": [
+		"client-side",
+		"README.md"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/NasExt/DependentSelectBox.git"
+	}
+}

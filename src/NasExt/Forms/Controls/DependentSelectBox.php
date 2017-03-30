@@ -18,6 +18,7 @@ use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Controls\SelectBox;
 use Nette\Forms\Container;
 use Nette\InvalidStateException;
+use Nette\InvalidArgumentException;
 use Nette\Utils\Callback;
 use Nette\Utils\Html;
 use Nette\Utils\Json;
@@ -42,13 +43,13 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 	/** @var  bool */
 	private $disabledWhenEmpty;
-	
+
 	/** @var bool */
 	protected $disabled;
 
 	/** @var  mixed */
 	private $tempValue;
-	
+
 	/** @var bool */
 	private $multiple;
 
@@ -122,7 +123,7 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	{
 		$this->disabled = $value;
 		return $this;
-	}	
+	}
 
 	/**
 	 * Returns selected key.
@@ -131,6 +132,9 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	public function getValue()
 	{
 		$this->tryLoadItems();
+		if ($this->multiple) {
+			return array_values(array_intersect($this->value, array_keys($this->items)));
+		}
 		return parent::getValue();
 	}
 
@@ -156,7 +160,11 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	{
 		parent::setItems($items, $useKeys);
 		if ($this->tempValue != NULL) {
-			parent::setValue($this->tempValue);
+			if ($this->multiple){
+				$this->setMultipleValue($this->tempValue);
+			} else {
+				parent::setValue($this->tempValue);
+			}
 		}
 	}
 
@@ -280,11 +288,26 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	private function prepareItems($items)
 	{
 		$newItems = array();
+
 		foreach ($items as $key => $item) {
-			$newItems[] = array(
-				'key' => $key,
-				'value' => $item,
-			);
+			if ($item instanceof \Nette\Utils\Html) {
+				$newItems[] = array(
+					'key' => $item->getValue(),
+					'value' => $item->getText(),
+				);
+
+				end($newItems);
+				$key = key($newItems);
+
+				foreach ($item->attrs as $attribute => $value) {
+					$newItems[$key]['attributes'][$attribute] = $value;
+				}
+			} else {
+				$newItems[] = array(
+					'key' => $key,
+					'value' => $item,
+				);
+			}
 		}
 		return $newItems;
 	}
@@ -313,5 +336,57 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	{
 		$container[$name] = new self($label, $parents, $dependentCallback, $multiple);
 		return $container[$name];
+	}
+
+	/**
+	 * Returns HTML name of control.
+	 * @return string
+	 */
+	public function getHtmlName()
+	{
+		return parent::getHtmlName() . ($this->multiple ? '[]' : '');
+	}
+
+
+	public function loadHttpData()
+	{
+		if (!$this->multiple){
+			parent::loadHttpData();
+			return;
+		}
+		$this->value = array_keys(array_flip($this->getHttpData(\Nette\Forms\Form::DATA_TEXT)));
+		if (is_array($this->disabled)) {
+			$this->value = array_diff($this->value, array_keys($this->disabled));
+		}
+	}
+
+	/**
+	 * Sets selected items (by keys).
+	 * @param  array
+	 * @return self
+	 * @internal
+	 */
+	private function setMultipleValue($values)
+	{
+		if (is_scalar($values) || $values === NULL) {
+			$values = (array) $values;
+		} elseif (!is_array($values)) {
+			throw new Nette\InvalidArgumentException(sprintf("Value must be array or NULL, %s given in field '%s'.", gettype($values), $this->name));
+		}
+		$flip = array();
+		foreach ($values as $value) {
+			if (!is_scalar($value) && !method_exists($value, '__toString')) {
+				throw new Nette\InvalidArgumentException(sprintf("Values must be scalar, %s given in field '%s'.", gettype($value), $this->name));
+			}
+			$flip[(string) $value] = TRUE;
+		}
+		$values = array_keys($flip);
+		if ($this->checkAllowedValues && ($diff = array_diff($values, array_keys($this->items)))) {
+			$set = Nette\Utils\Strings::truncate(implode(', ', array_map(function ($s) { return var_export($s, TRUE); }, array_keys($this->items))), 70, '...');
+			$vals = (count($diff) > 1 ? 's' : '') . " '" . implode("', '", $diff) . "'";
+			throw new Nette\InvalidArgumentException("Value$vals are out of allowed set [$set] in field '{$this->name}'.");
+		}
+		$this->value = $values;
+		return $this;
 	}
 }
