@@ -41,16 +41,16 @@
 				var parentElement = $('#' + id);
 				if (parentElement.length > 0) {
 					var val;
-                    if (parentElement.prop('type') === 'checkbox') {
-                        val = parentElement.prop('checked') ? 1 : 0;
-                    }
-                    else {
-                        val = $(parentElement).val();
-                        if (!val) {
-                            return;
-                        }
-                    }
-                    signalLink = signalLink + '&' + name + '=' + val;
+                    			if (parentElement.prop('type') === 'checkbox') {
+                        			val = parentElement.prop('checked') ? 1 : 0;
+                    			}
+                    			else {
+                        			val = $(parentElement).val();
+						if (!val) {
+						    return;
+						}
+					}
+                    			signalLink = signalLink + '&' + name + '=' + val;
 				}
 			});
 
