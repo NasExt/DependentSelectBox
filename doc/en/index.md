@@ -14,7 +14,7 @@ NasExt/DependentSelectBox requires PHP 5.3.2 or higher.
 Installation
 ------------
 
-The best way to install NasExt/DependentSelectBox is using  [Composer](http://getcomposer.org/):
+The best way to install NasExt/DependentSelectBox is using [Composer](http://getcomposer.org/):
 
 ```sh
 $ composer require nasext/dependent-select-box
@@ -101,7 +101,7 @@ $form->addText('text', 'Text')
 	->setAttribute('placeholder', 'Text');
 
 $form->addDependentSelectBox('city', 'City', array($form["country"]), function ($values) use ($citySlovakia, $cityCzech, $cityUsa) {
-	$data =  new \NasExt\Forms\Controls\DependentSelectBoxData();
+	$data = new \NasExt\Forms\Controls\DependentSelectBoxData();
 	if ($values['country'] == 1) {
 		return $data->setItems($citySlovakia);
 	} elseif ($values['country'] == 2) {
@@ -114,7 +114,7 @@ $form->addDependentSelectBox('city', 'City', array($form["country"]), function (
 })->setPrompt('- Select -');
 
 $form->addDependentSelectBox('street', 'Street', array($form["city"], $form["text"]), function ($values) use ($street1, $street2, $street3) {
-	$data =  new \NasExt\Forms\Controls\DependentSelectBoxData();
+	$data = new \NasExt\Forms\Controls\DependentSelectBoxData();
 
 	if ($values['city'] == 1) {
 		if (!empty($values["text"])) {
@@ -140,7 +140,7 @@ $form->addDependentSelectBox('street', 'Street', array($form["city"], $form["tex
 You can set select box as disabled with setDisabledWhenEmpty(TRUE) when is empty, but don't remember disabled select box does not support validation
 ```php
 $form->addDependentSelectBox('city', 'City', array($form["country"]), function ($values) use ($citySlovakia, $cityCzech, $cityUsa) {
-	$data =  new \NasExt\Forms\Controls\DependentSelectBoxData();
+	$data = new \NasExt\Forms\Controls\DependentSelectBoxData();
 	if ($values['country'] == 1) {
 		return $data->setItems($citySlovakia);
 	} elseif ($values['country'] == 2) {
