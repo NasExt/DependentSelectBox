@@ -33,6 +33,7 @@ jobs:
                 - php temp/coding-standard/ecs check src tests --config temp/coding-standard/coding-standard-php56.neon
 
         -   stage: Code Coverage
+            php: 7.0
             script:
                 - vendor/bin/tester -p phpdbg tests -s --coverage ./coverage.xml --coverage-src ./src
 
