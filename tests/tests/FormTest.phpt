@@ -7,9 +7,9 @@
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
+ *
+ * @phpVersion 5.6.0
  */
-
-declare(strict_types=1);
 
 namespace AlesWita\DropzoneUploader\Tests\Tests;
 

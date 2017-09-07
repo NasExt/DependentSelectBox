@@ -61,17 +61,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @param callable
-	 * @return self
-	 */
-	public function setDependentCallback(callable $callback)
-	{
-		$this->dependentCallback = $callback;
-		return $this;
-	}
-
-
-	/**
 	 * @throws Nette\InvalidStateException
 	 * @return Nette\Utils\Html
 	 */
@@ -160,6 +149,17 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 			}
 		}
 
+		return $this;
+	}
+
+
+	/**
+	 * @param callable
+	 * @return self
+	 */
+	public function setDependentCallback(callable $callback)
+	{
+		$this->dependentCallback = $callback;
 		return $this;
 	}
 

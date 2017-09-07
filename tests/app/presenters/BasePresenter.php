@@ -26,7 +26,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	/**
 	 * @return void
 	 */
-	public function actionDefault(): void
+	public function actionDefault()
 	{
 	}
 
