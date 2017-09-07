@@ -23,7 +23,7 @@ use Nette;
 class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette\Application\UI\ISignalReceiver
 {
 	/** @var string */
-	public const SIGNAL_NAME = 'load';
+	const SIGNAL_NAME = 'load';
 
 	/** @var array */
 	private $parents;

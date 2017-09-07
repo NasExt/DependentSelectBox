@@ -32,7 +32,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	/**
 	 * @return Nette\Application\UI\Form
 	 */
-	protected function createComponentForm(): Nette\Application\UI\Form
+	protected function createComponentForm()
 	{
 		$form = new Nette\Application\UI\Form;
 
