@@ -37,20 +37,21 @@ Include from client-side:
 
 Initialize DependentSelectBox:
 ```js
-$('[data-dependentselectbox]').dependentSelectBox();
+// @param callback a handler to be called when Ajax requests complete
+$('[data-dependentselectbox]').dependentSelectBox( callback );
 ```
 
 ## Usage
 
 How to use DependentSelectBox in form:
-````php
+```php
 
 	$form->addDependentSelectBox('name', 'Label', array(dependent form controls), function ($values) use () {
 				return new \NasExt\Forms\Controls\DependentSelectBoxData(items, valueForSet);
 			})
 ```
 
-````php
+```php
 		$country = array(
 			1 => 'Slovakia',
 			2 => 'Czech',
@@ -139,7 +140,7 @@ How to use DependentSelectBox in form:
 ```
 
 You can set select box as disabled with setDisabledWhenEmpty(TRUE) when is empty, but don't remember disabled select box does not support validation
-````php
+```php
 $form->addDependentSelectBox('city', 'City', array($form["country"]), function ($values) use ($citySlovakia, $cityCzech, $cityUsa) {
 			$data =  new \NasExt\Forms\Controls\DependentSelectBoxData();
 			if ($values['country'] == 1) {

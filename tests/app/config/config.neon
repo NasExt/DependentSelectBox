@@ -1,0 +1,15 @@
+extensions:
+	dependentSelectBox: NasExt\Forms\DI\DependentSelectBoxExtension
+
+application:
+	mapping:
+		*: NasExt\Forms\Tests\App\Presenters\*Presenter
+
+services:
+	#fake.translator:
+		#class: NasExt\Forms\Tests\App\Service\FakeTranslator
+
+	base.presenter:
+		class: NasExt\Forms\Tests\App\Presenters\BasePresenter
+
+	routing.router: NasExt\Forms\Tests\App\Router\Router::createRouter

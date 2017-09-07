@@ -4,7 +4,17 @@
  */
 
 (function ($) {
-	$.fn.dependentSelectBox = function (options) {
+	$.fn.dependentSelectBox = function (options, listener) {
+		var callback = function () {};
+
+		if(typeof( options ) === 'function') {
+			callback = options;
+			options = null;
+		}
+
+		if(typeof( listener ) === 'function' ) {
+			callback = listener;
+		}
 
 		var dsb = this;
 		dsb.timeout = [];
@@ -31,11 +41,19 @@
 			$.each(parents, function (name, id) {
 				var parentElement = $('#' + id);
 				if (parentElement.length > 0) {
-					var val = $(parentElement).val();
-					if (val) {
-						signalLink = signalLink + '&' + name + '=' + val;
+					var val;
+
+					if (parentElement.prop('type') === 'checkbox') {
+				 		val = parentElement.prop('checked') ? 1 : 0;
+					} else {
+						val = $(parentElement).val();
+
+						if (!val) {
+							return;
+						}
 					}
 
+					signalLink = signalLink + '&' + name + '=' + val;
 				}
 			});
 
@@ -92,9 +110,10 @@
 										}
 										otpGroup.append(option);
 									});
+
 									otpGroup.appendTo($select);
-								}
-								else {
+
+								} else {
 									var option = $('<option>')
 										.attr('value', item.key).text(item.value);
 
@@ -110,10 +129,8 @@
 
 									option.appendTo($select);
 								}
-
-
-
 							});
+
 						} else {
 							if (data.disabledWhenEmpty) {
 								$select.prop('disabled', true);
@@ -122,7 +139,8 @@
 
 						$select.change();
 					}
-				}
+				},
+				complete: callback
 			});
 		};
 
@@ -156,13 +174,14 @@
 			}, dsb.settings.suggestTimeout);
 		};
 
+
 		/**
 		 * Process
 		 */
 		return this.each(function () {
 			var $dependentSelect = $(this);
-
 			var parents = $($dependentSelect).data(dsb.settings.dataParentsName);
+
 			$.each(parents, function (name, id) {
 				var parentElement = $('#' + id);
 
@@ -171,6 +190,7 @@
 						$(parentElement).on("keyup", function (e) {
 							dsb.onKeyup(e, $(this), $dependentSelect);
 						});
+
 					} else {
 						$(parentElement).on("change", function (e) {
 							dsb.onChange(e, $(this), $dependentSelect);
