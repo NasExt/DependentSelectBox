@@ -50,7 +50,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 * @param callable
 	 * @param bool
 	 */
-	public function __construct(string $label, $parents, callable $dependentCallback, $multiple = false)
+	public function __construct($label, $parents, callable $dependentCallback, $multiple = false)
 	{
 		$this->parents = !is_array($parents) ? [$parents] : $parents;
 		$this->setDependentCallback($dependentCallback);
