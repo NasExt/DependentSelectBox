@@ -31,7 +31,6 @@ class DependentSelectBoxData
 	public function __construct(array $items = [], $value = null)
 	{
 		$this->items = $items;
-
 		$this->value = $value;
 	}
 
@@ -43,7 +42,6 @@ class DependentSelectBoxData
 	public function setItems(array $items)
 	{
 		$this->items = $items;
-
 		return $this;
 	}
 
@@ -55,7 +53,6 @@ class DependentSelectBoxData
 	public function setValue($value)
 	{
 		$this->value = $value;
-
 		return $this;
 	}
 

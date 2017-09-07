@@ -44,7 +44,7 @@
 					var val;
 
 					if (parentElement.prop('type') === 'checkbox') {
-				 		val = parentElement.prop('checked') ? 1 : 0;
+						val = parentElement.prop('checked') ? 1 : 0;
 					} else {
 						val = $(parentElement).val();
 
