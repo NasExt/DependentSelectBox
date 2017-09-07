@@ -9,13 +9,14 @@
  * the file license.md that was distributed with this source code.
  */
 
-if (@!include __DIR__ . '/../vendor/autoload.php') {
+if (@!include __DIR__ . '/../../../../vendor/autoload.php') {
 	echo 'Install Nette Tester using `composer install`';
 	exit(1);
 }
 
 require_once __DIR__ . '/app/presenters/BasePresenter.php';
 require_once __DIR__ . '/app/router/Router.php';
+
 
 Tester\Environment::setup();
 

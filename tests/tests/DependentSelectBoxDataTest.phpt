@@ -11,7 +11,7 @@
  * @phpVersion 5.6.0
  */
 
-namespace AlesWita\DropzoneUploader\Tests\Tests;
+namespace NasExt\Forms\Tests\Tests;
 
 use NasExt;
 use Tester;
@@ -62,7 +62,7 @@ final class DependentSelectBoxDataTest extends Tester\TestCase
 
 		$data = new NasExt\Forms\Controls\DependentSelectBoxData;
 
-        $data->setItems($items)
+		$data->setItems($items)
 			->setValue($value);
 
 		Tester\Assert::same($items, $data->getItems());
