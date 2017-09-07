@@ -30,6 +30,7 @@ class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->getMethod('initialize');
+
 		$initialize->addBody(__CLASS__ . '::registerControls();');
 	}
 
