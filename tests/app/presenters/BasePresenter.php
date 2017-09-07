@@ -39,7 +39,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
 			->setPrompt('---');
 
-		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'], function (array $values): NasExt\Forms\Controls\DependentSelectBoxData {
+		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'], function (array $values) {
 			$data = new NasExt\Forms\Controls\DependentSelectBoxData;
 
 			switch ($values['select']) {
