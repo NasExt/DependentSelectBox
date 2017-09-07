@@ -39,8 +39,8 @@ class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
 	 */
 	public static function registerControls()
 	{
-		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, callable $dependentCallback, $multiple = false) {
-			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents, $dependentCallback, $multiple);
+		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, callable $dependentCallback) {
+			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents, $dependentCallback);
 		});
 	}
 }
