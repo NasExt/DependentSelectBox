@@ -17,6 +17,7 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 require_once __DIR__ . '/app/presenters/BasePresenter.php';
 require_once __DIR__ . '/app/router/Router.php';
 
+
 Tester\Environment::setup();
 
 define('TEMP_DIR', __DIR__ . '/tmp/' . lcg_value());

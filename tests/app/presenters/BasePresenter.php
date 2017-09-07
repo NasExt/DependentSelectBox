@@ -44,17 +44,33 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 			switch ($values['select']) {
 				case 1:
-					$data->setItems([1 => 'First']);
+					$data->setItems([1 => 'First', 2 => 'Still first']);
 					break;
 
 				case 2:
-					$data->setItems([2 => 'Second']);
+					$data->setItems([3 => 'Second', 4 => 'Still second']);
 					break;
 			}
 
 			return $data;
 		})
 			->setPrompt('---');
+
+		$form->addDependentSelectBox('dependentMultiSelect', 'Dependent multi select', $form['select'], function (array $values) {
+			$data = new NasExt\Forms\Controls\DependentSelectBoxData;
+
+			switch ($values['select']) {
+				case 1:
+					$data->setItems([1 => 'First', 2 => 'Still first']);
+					break;
+
+				case 2:
+					$data->setItems([3 => 'Second', 4 => 'Still second']);
+					break;
+			}
+
+			return $data;
+		}, true);
 
 		return $form;
 	}
