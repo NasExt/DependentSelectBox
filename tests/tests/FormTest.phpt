@@ -84,6 +84,8 @@ final class FormTest extends Tester\TestCase
 
 		Tester\Assert::same('---', $foo['option']);
 	}
+
+
 	/**
 	 * @return void
 	 */
@@ -216,6 +218,33 @@ final class FormTest extends Tester\TestCase
 		$presenter->autoCanonicalize = false;
 		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'default'], ['_do' => 'form-submit'], ['select' => 1, 'dependentMultiSelect' => [3, 4]]);
 		$response = $presenter->run($request);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testSix()
+	{
+		$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'default'], ['_do' => 'form-submit'], []);
+		$response = $presenter->run($request);
+
+
+		// check form
+		$form = $presenter['form'];
+
+		Tester\Assert::true($form->isSubmitted());
+		Tester\Assert::true($form->isSuccess());
+		Tester\Assert::same(['select' => null, 'dependentSelect' => null, 'dependentMultiSelect' => []], (array) $form->getValues());
 	}
 }
 
