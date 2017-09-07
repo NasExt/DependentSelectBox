@@ -168,7 +168,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 * @param bool
 	 * @return self
 	 */
-	public function setDisabledWhenEmpty(bool $value = true)
+	public function setDisabledWhenEmpty($value = true)
 	{
 		$this->disabledWhenEmpty = $value;
 		return $this;
