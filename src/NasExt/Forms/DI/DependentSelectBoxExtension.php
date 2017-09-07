@@ -1,41 +1,46 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: Ondra Votava
- * Date: 18.08.2016
- * Time: 21:00
+ * This file is part of the NasExt extensions of Nette Framework
+ *
+ * Copyright (c) 2013 Dusan Hudak (http://dusan-hudak.com)
+ *
+ * For the full copyright and license information, please view
+ * the file license.md that was distributed with this source code.
  */
 
 namespace NasExt\Forms\DI;
 
 use NasExt;
 use Nette;
-use Nette\PhpGenerator as Code;
+
 
 /**
  * Class DependentSelectBoxExtension
  * @package NasExt\Forms\DI
  * @author Ondra Votava <ondra.votava@pixidos.com>
+ * @author Ales Wita
  */
 class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
 {
-	public function afterCompile(Code\ClassType $class)
+	/**
+	 * @param Nette\PhpGenerator\ClassType
+	 * @return void
+	 */
+	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
-		parent::afterCompile($class);
-
-		$init = $class->methods['initialize'];
-		$init->addBody('NasExt\Forms\Controls\DependentSelectBox::register();');
+		$initialize = $class->getMethod('initialize');
+		$initialize->addBody(__CLASS__ . '::registerControls();');
 	}
 
 
-
 	/**
-	 * @param \Nette\Configurator $configurator
+	 * @return void
 	 */
-	public static function register(Nette\Configurator $configurator)
+	public static function registerControls()
 	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
-			$compiler->addExtension('dependentSelectBox', new DependentSelectBoxExtension());
-		};
+		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, callable $dependentCallback, $multiple = false) {
+			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents, $dependentCallback, $multiple);
+		});
 	}
 }

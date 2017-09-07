@@ -6,22 +6,13 @@
  * Copyright (c) 2013 Dusan Hudak (http://dusan-hudak.com)
  *
  * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
+ * the file license.md that was distributed with this source code.
  */
 
 namespace NasExt\Forms\Controls;
 
-use Nette\Application\UI\Form;
-use Nette\Application\UI\ISignalReceiver;
-use Nette\Application\UI\Presenter;
-use Nette\Forms\Controls\BaseControl;
-use Nette\Forms\Controls\SelectBox;
-use Nette\Forms\Container;
-use Nette\InvalidStateException;
-use Nette\InvalidArgumentException;
-use Nette\Utils\Callback;
-use Nette\Utils\Html;
-use Nette\Utils\Json;
+use Nette;
+
 
 /**
  * DependentSelectBox
@@ -29,185 +20,207 @@ use Nette\Utils\Json;
  * @author Jáchym Toušek
  * @author Dusan Hudak
  */
-class DependentSelectBox extends SelectBox implements ISignalReceiver
+class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette\Application\UI\ISignalReceiver
 {
-
-	/** @var string signal name */
+	/** @var string */
 	const SIGNAL_NAME = 'load';
 
-	/** @var BaseControl[] */
+	/** @var bool */
+	protected $disabled;
+
+	/** @var array */
 	private $parents;
 
 	/** @var callable */
 	private $dependentCallback;
 
-	/** @var  bool */
-	private $disabledWhenEmpty;
-
-	/** @var bool */
-	protected $disabled;
-
-	/** @var  mixed */
-	private $tempValue;
-
 	/** @var bool */
 	private $multiple;
 
+	/** @var bool */
+	private $disabledWhenEmpty;
+
+	/** @var mixed */
+	private $tempValue;
+
 
 	/**
-	 * @param string $label
-	 * @param array $parents
-	 * @param callable $dependentCallback
-	 * @param bool $multiple
+	 * @param string
+	 * @param array|Nette\Forms\Controls\BaseControl
+	 * @param callable
+	 * @param bool
 	 */
-	public function __construct($label = NULL, array $parents, callable $dependentCallback, $multiple)
+	public function __construct($label, $parents, callable $dependentCallback, $multiple = false)
 	{
-		$this->parents = (array)$parents;
-		$this->dependentCallback = $dependentCallback;
+		$this->parents = !is_array($parents) ? [$parents] : $parents;
+		$this->setDependentCallback($dependentCallback);
 		$this->multiple = $multiple;
+
 		parent::__construct($label);
 	}
 
 
 	/**
-	 * @return Html
-	 * @throws InvalidStateException
+	 * @throws Nette\InvalidStateException
+	 * @return Nette\Utils\Html
 	 */
 	public function getControl()
 	{
 		$this->tryLoadItems();
 		$control = parent::getControl();
+		$attrs = ['multiple' => $this->multiple];
 
-		if ($this->multiple == TRUE) {
-			$control->addAttributes(array(
-				'multiple' => TRUE
-			));
-		}
-
-		if ($this->dependentCallback !== NULL) {
+		if ($this->dependentCallback !== null) {
 			$form = $this->getForm();
-			if (!$form || !$form instanceof Form) {
-				throw new InvalidStateException("DependentSelectBox supports only Nette\\Application\\UI\\Form.");
+
+			if (!$form || !$form instanceof Nette\Application\UI\Form) {
+				throw new Nette\InvalidStateException('NasExt\\Forms\\Controls\\DependentSelectBox supports only Nette\\Application\\UI\\Form.');
 			}
 
-			$control->attrs['data-dependentselectbox'] = $form->getPresenter()->link(
-				$this->lookupPath('Nette\Application\UI\Presenter') . self::NAME_SEPARATOR . self::SIGNAL_NAME . '!'
-			);
 
-			$parents = array();
+			$parents = [];
 			foreach ($this->parents as $parent) {
 				$parents[$parent->getName()] = $parent->getHtmlId();
 			}
 
-			$control->attrs['data-dependentselectbox-parents'] = Json::encode($parents);
+			$attrs['data-dependentselectbox-parents'] = Nette\Utils\Json::encode($parents);
+			$attrs['data-dependentselectbox'] = $form->getPresenter()->link($this->lookupPath('Nette\\Application\\UI\\Presenter') . Nette\ComponentModel\IComponent::NAME_SEPARATOR . self::SIGNAL_NAME . '!');
 		}
+
+		$control->addAttributes($attrs);
+
 		return $control;
 	}
 
 
 	/**
-	 * @param bool $value
-	 * @return $this
-	 */
-	public function setDisabledWhenEmpty($value = TRUE)
-	{
-		$this->disabledWhenEmpty = $value;
-		return $this;
-	}
-
-	/**
-	 * @param bool $value
-	 * @return $this
-	 */
-	public function setDisabled($value = TRUE)
-	{
-		$this->disabled = $value;
-		return $this;
-	}
-
-	/**
-	 * Returns selected key.
-	 * @return scalar
+	 * @return string|int
 	 */
 	public function getValue()
 	{
 		$this->tryLoadItems();
+
 		if ($this->multiple) {
 			return array_values(array_intersect($this->value, array_keys($this->items)));
 		}
+
 		return parent::getValue();
 	}
 
 
 	/**
-	 * Sets selected item (by key).
-	 * @param  scalar
+	 * @param bool|array
+	 * @return self
+	 */
+	public function setDisabled($value = true)
+	{
+		$this->disabled = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @param string|int
 	 * @return self
 	 */
 	public function setValue($value)
 	{
 		$this->tempValue = $value;
+		return $this;
 	}
 
 
 	/**
-	 * Sets items from which to choose.
 	 * @param  array
 	 * @param  bool
 	 * @return self
 	 */
-	public function setItems(array $items, $useKeys = TRUE)
+	public function setItems(array $items, $useKeys = true)
 	{
 		parent::setItems($items, $useKeys);
-		if ($this->tempValue != NULL) {
-			if ($this->multiple){
+
+		if ($this->tempValue !== '') {// '' it's prompt value
+			if ($this->multiple) {
 				$this->setMultipleValue($this->tempValue);
+
 			} else {
 				parent::setValue($this->tempValue);
 			}
 		}
+
+		return $this;
 	}
 
 
+	/**
+	 * @param callable
+	 * @return self
+	 */
+	public function setDependentCallback(callable $callback)
+	{
+		$this->dependentCallback = $callback;
+		return $this;
+	}
+
+
+	/**
+	 * @param bool
+	 * @return self
+	 */
+	public function setDisabledWhenEmpty($value = true)
+	{
+		$this->disabledWhenEmpty = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @return void
+	 */
 	protected function tryLoadItems()
 	{
-		if ($this->shouldLoadItems()) {
+		if ($this->parents === array_filter($this->parents, function ($p) {return !$p->hasErrors();})) {
+			$parentsValues = [];
 
-			$parentsValues = array();
 			foreach ($this->parents as $parent) {
 				$parentsValues[$parent->getName()] = $parent->getValue();
 			}
 
-			/** @var DependentSelectBoxData $data */
-			$data = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
-			if (!$data instanceof DependentSelectBoxData) {
-				throw new \Exception('Callback for:"' . $this->getHtmlId() . '" must return DependentSelectBoxData instance!');
-			}
 
+			$data = $this->getData([$parentsValues]);
 			$items = $data->getItems();
-			if($this->getForm()->isSubmitted()){
-				$value = $this->value;
-			}elseif($this->value != NULL){
-				$value = $this->value;
-			}elseif($this->tempValue != NULL){
-				$value = $this->tempValue;
-			}else{
-				$value = $data->getValue();
-			}
-			$this->setValue($value);
 
-			if ($items) {
-				if ($this->disabledWhenEmpty == TRUE && $this->disabled !== TRUE) {
-					$this->setDisabled(FALSE);
-					$this->setOmitted(FALSE);
-				}
-				if ($this->disabled == TRUE) {
-					$this->setDisabled(TRUE);
-				}
-				$this->loadHttpData();
-				$this->setItems($items);
+
+			if ($this->getForm()->isSubmitted()) {
+				$this->setValue($this->value);
+
+			} elseif ($this->value !== null) {
+				$this->setValue($this->value);
+
+			} elseif ($this->tempValue !== null) {
+				$this->setValue($this->tempValue);
+
 			} else {
-				if ($this->disabledWhenEmpty == TRUE) {
+				$this->setValue($data->getValue());
+			}
+
+
+			if (count($items) > 0) {
+				if ($this->disabledWhenEmpty === true && $this->disabled !== true) {
+					$this->setDisabled(false);
+
+					$this->setOmitted(false);
+				}
+
+				if ($this->disabled === true) {
+					$this->setDisabled(true);
+				}
+
+				$this->loadHttpData();// ??
+				$this->setItems($items);
+
+			} else {
+				if ($this->disabledWhenEmpty === true) {
 					$this->setDisabled();
 				}
 			}
@@ -216,130 +229,93 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 
 
 	/**
-	 * @return boolean
-	 */
-	protected function shouldLoadItems()
-	{
-		foreach ($this->parents as $parent) {
-			if ($parent->hasErrors()) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
-
-
-	/**
-	 * @param callable $callback
-	 * @return DependentSelectBox provides fluent interface
-	 */
-	public function setDependentCallback($callback)
-	{
-		$this->dependentCallback = $callback;
-		return $this;
-	}
-
-
-	/**
-	 * @param string $signal
-	 * @throws \Nette\InvalidStateException
+	 * @throws Nette\InvalidStateException
+	 * @param string
+	 * @return void
 	 */
 	public function signalReceived($signal)
 	{
-		/** @var Presenter $presenter */
-		$presenter = $this->lookup('Nette\Application\UI\Presenter');
+		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
+
 		if ($signal === self::SIGNAL_NAME && $presenter->isAjax()) {
-
-			if (!is_callable($this->dependentCallback)) {
-				throw new InvalidStateException('Dependent callback not set.');
+			if ($this->dependentCallback === null) {
+				throw new Nette\InvalidStateException('Dependent callback not set.');
 			}
 
-			$parentsValues = array();
+			$parentsNames = [];
+
 			foreach ($this->parents as $parent) {
-				$parentsValues[$parent->getName()] = $presenter->getParameter($parent->getName());
+				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
 			}
 
-			/** @var DependentSelectBoxData $data */
-			$data = Callback::invokeArgs($this->dependentCallback, array($parentsValues));
-			if (!$data instanceof DependentSelectBoxData) {
-				throw new \Exception('Callback for:"' . $this->getHtmlId() . '" must return DependentSelectBoxData instance!');
-			}
 
-			$items = $data->getItems();
-			$value = $data->getValue();
+			$data = $this->getData([$parentsNames]);
 
-			$presenter->payload->dependentselectbox = array(
+			$presenter->payload->dependentselectbox = [
 				'id' => $this->getHtmlId(),
-				'items' => $this->prepareItems($items),
-				'value' => $value,
+				'items' => $this->prepareItems($data->getItems()),
+				'value' => $data->getValue(),
 				'prompt' => $this->getPrompt(),
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,
-			);
-
+			];
 			$presenter->sendPayload();
 		}
 	}
 
 
 	/**
-	 * @param array $items
+	 * @param array
 	 * @return array
 	 */
-	private function prepareItems($items)
+	private function prepareItems(array $items)
 	{
-		$newItems = array();
+		$newItems = [];
 
 		foreach ($items as $key => $item) {
-			if ($item instanceof \Nette\Utils\Html) {
-				$newItems[] = array(
+			if ($item instanceof Nette\Utils\Html) {
+				$newItems[] = [
 					'key' => $item->getValue(),
 					'value' => $item->getText(),
-				);
+				];
 
 				end($newItems);
+
 				$key = key($newItems);
 
-				foreach ($item->attrs as $attribute => $value) {
-					$newItems[$key]['attributes'][$attribute] = $value;
+				foreach ($item->attrs as $attr => $val) {
+					$newItems[$key]['attributes'][$attr] = $val;
 				}
+
 			} else {
-				$newItems[] = array(
+				$newItems[] = [
 					'key' => $key,
 					'value' => $item,
-				);
+				];
 			}
 		}
+
 		return $newItems;
 	}
 
 
-	/********************* registration ****************** */
-
 	/**
-	 * Adds addDependentSelectBox() method to \Nette\Forms\Form
+	 * @throws Exception
+	 * @param array
+	 * @return NasExt\Forms\Controls\DependentSelectBoxData
 	 */
-	public static function register()
+	private function getData(array $args = [])
 	{
-		Container::extensionMethod('addDependentSelectBox', array('NasExt\Forms\Controls\DependentSelectBox', 'addDependentSelectBox'));
+		$data = Nette\Utils\Callback::invokeArgs($this->dependentCallback, $args);
+
+		if (!$data instanceof DependentSelectBoxData) {
+			throw new \Exception('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\Controls\\DependentSelectBoxData instance!');
+		}
+
+		return $data;
 	}
 
 
 	/**
-	 * @param Container $container
-	 * @param string $name
-	 * @param string $label
-	 * @param array $parents
-	 * @param callable $dependentCallback
-	 * @return DependentSelectBox provides fluent interface
-	 */
-	public static function addDependentSelectBox(Container $container, $name, $label = NULL, array $parents, callable $dependentCallback, $multiple = FALSE)
-	{
-		$container[$name] = new self($label, $parents, $dependentCallback, $multiple);
-		return $container[$name];
-	}
-
-	/**
-	 * Returns HTML name of control.
 	 * @return string
 	 */
 	public function getHtmlName()
@@ -348,44 +324,58 @@ class DependentSelectBox extends SelectBox implements ISignalReceiver
 	}
 
 
+	/**
+	 * @return void
+	 */
 	public function loadHttpData()
 	{
-		if (!$this->multiple){
+		if (!$this->multiple) {
 			parent::loadHttpData();
 			return;
 		}
-		$this->value = array_keys(array_flip($this->getHttpData(\Nette\Forms\Form::DATA_TEXT)));
+
+		$this->value = array_keys(array_flip($this->getHttpData(Nette\Forms\Form::DATA_TEXT)));
+
 		if (is_array($this->disabled)) {
 			$this->value = array_diff($this->value, array_keys($this->disabled));
 		}
 	}
 
+
 	/**
-	 * Sets selected items (by keys).
+	 * @throws Nette\InvalidArgumentException
 	 * @param  array
 	 * @return self
-	 * @internal
 	 */
 	private function setMultipleValue($values)
 	{
-		if (is_scalar($values) || $values === NULL) {
+		if (is_scalar($values) || $values === null) {
 			$values = (array) $values;
+
 		} elseif (!is_array($values)) {
-			throw new Nette\InvalidArgumentException(sprintf("Value must be array or NULL, %s given in field '%s'.", gettype($values), $this->name));
+			throw new Nette\InvalidArgumentException('Value must be array or null, ' . gettype($values) . ' given in field "' . $this->name . '".');
 		}
-		$flip = array();
+
+
+		$flip = [];
+
 		foreach ($values as $value) {
 			if (!is_scalar($value) && !method_exists($value, '__toString')) {
-				throw new Nette\InvalidArgumentException(sprintf("Values must be scalar, %s given in field '%s'.", gettype($value), $this->name));
+				throw new Nette\InvalidArgumentException('Values must be scalar, ' . gettype($value) . ' given in field "' . $this->name . '".');
 			}
-			$flip[(string) $value] = TRUE;
+
+			$flip[(string) $value] = true;
 		}
+
+
 		$values = array_keys($flip);
+
 		if ($this->checkAllowedValues && ($diff = array_diff($values, array_keys($this->items)))) {
-			$set = Nette\Utils\Strings::truncate(implode(', ', array_map(function ($s) { return var_export($s, TRUE); }, array_keys($this->items))), 70, '...');
+			$set = Nette\Utils\Strings::truncate(implode(', ', array_map(function ($s) { return var_export($s, true); }, array_keys($this->items))), 70, '...');
 			$vals = (count($diff) > 1 ? 's' : '') . " '" . implode("', '", $diff) . "'";
-			throw new Nette\InvalidArgumentException("Value$vals are out of allowed set [$set] in field '{$this->name}'.");
+			throw new Nette\InvalidArgumentException('Value ' . $vals . ' are out of allowed set [' . $set . '] in field "' . $this->name . '".');
 		}
+
 		$this->value = $values;
 		return $this;
 	}

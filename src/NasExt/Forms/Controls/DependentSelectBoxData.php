@@ -6,44 +6,53 @@
  * Copyright (c) 2013 Dusan Hudak (http://dusan-hudak.com)
  *
  * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
+ * the file license.md that was distributed with this source code.
  */
 
 namespace NasExt\Forms\Controls;
 
-use Nette\Object;
 
 /**
  * @author Dusan Hudak
  */
-class DependentSelectBoxData extends Object
+class DependentSelectBoxData
 {
 	/** @var array */
-	private $items = array();
+	private $items = [];
 
-	/** @var  NULL */
+	/** @var string|int */
 	private $value;
 
 
 	/**
-	 * @param array $items
-	 * @param null $value
+	 * @param array
+	 * @param string|int
 	 */
-	public function __construct(array $items = array(), $value = NULL)
+	public function __construct(array $items = [], $value = null)
 	{
 		$this->items = $items;
 		$this->value = $value;
+	}
+
+
+	/**
+	 * @param array
+	 * @return self
+	 */
+	public function setItems(array $items)
+	{
+		$this->items = $items;
 		return $this;
 	}
 
 
 	/**
-	 * @param array $items
-	 * @return $this
+	 * @param string|int
+	 * @return self
 	 */
-	public function setItems(array $items)
+	public function setValue($value)
 	{
-		$this->items = $items;
+		$this->value = $value;
 		return $this;
 	}
 
@@ -58,18 +67,7 @@ class DependentSelectBoxData extends Object
 
 
 	/**
-	 * @param mixed $value
-	 * @return $this
-	 */
-	public function setValue($value)
-	{
-		$this->value = $value;
-		return $this;
-	}
-
-
-	/**
-	 * @return mixed
+	 * @return string|int
 	 */
 	public function getValue()
 	{
