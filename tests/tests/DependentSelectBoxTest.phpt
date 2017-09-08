@@ -40,7 +40,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelectBox']);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1']);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
@@ -48,7 +48,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 		// check form
-		$form = $presenter['form'];
+		$form = $presenter['dependentSelectForm1'];
 
 		Tester\Assert::true($form instanceof Nette\Application\UI\Form);
 
@@ -82,7 +82,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 		Tester\Assert::same($control->getAttribute('data-dependentselectbox'), $foo['@attributes']['data-dependentselectbox']);
 		Tester\Assert::same($control->getAttribute('data-dependentselectbox-parents'), $foo['@attributes']['data-dependentselectbox-parents']);
 
-		Tester\Assert::same('---', $foo['option']);
+		Tester\Assert::same('Select select first', $foo['option']);
 	}
 
 
@@ -100,7 +100,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelectBox'], ['_do' => 'form-submit'], ['select' => 1, 'dependentSelect' => 1]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], ['select' => 1, 'dependentSelect' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
@@ -108,7 +108,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 		// check dependent select
-		$dependentSelect = $presenter['form']['dependentSelect'];
+		$dependentSelect = $presenter['dependentSelectForm1']['dependentSelect'];
 
 		Tester\Assert::true($dependentSelect instanceof NasExt\Forms\Controls\DependentSelectBox);
 		Tester\Assert::same(1, $dependentSelect->getValue());
@@ -130,7 +130,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelectBox'], ['_do' => 'form-submit'], ['select' => 1, 'dependentSelect' => 3]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], ['select' => 1, 'dependentSelect' => 3]);
 		$response = $presenter->run($request);
 	}
 
@@ -149,12 +149,12 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelectBox'], ['_do' => 'form-submit'], []);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], []);
 		$response = $presenter->run($request);
 
 
 		// check form
-		$form = $presenter['form'];
+		$form = $presenter['dependentSelectForm1'];
 
 		Tester\Assert::true($form->isSubmitted());
 		Tester\Assert::true($form->isSuccess());
@@ -178,12 +178,12 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelectBox', 'do' => 'form-dependentSelect-load', 'select' => 1]);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1', 'do' => 'dependentSelectForm1-dependentSelect-load', 'select' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\JsonResponse);
 		Tester\Assert::same([
-			'id' => 'frm-form-dependentSelect',
+			'id' => 'frm-dependentSelectForm1-dependentSelect',
 			'items' => [
 				0 => ['key' => 1, 'value' => 'First'],
 				1 => ['key' => 2, 'value' => 'Still first'],
@@ -192,6 +192,27 @@ final class DependentSelectBoxTest extends Tester\TestCase
 			'prompt' => '---',
 			'disabledWhenEmpty' => null,
 		], $response->getPayload()->dependentselectbox);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testSix()
+	{
+		/*$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], []);
+		$response = $presenter->run($request);  */
+
+
 	}
 }
 

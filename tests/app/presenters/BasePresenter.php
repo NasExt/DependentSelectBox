@@ -24,7 +24,15 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	/**
 	 * @return void
 	 */
-	public function actionDependentSelectBox()
+	public function actionDependentSelect1()
+	{
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentSelect2()
 	{
 	}
 
@@ -32,7 +40,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	/**
 	 * @return Nette\Application\UI\Form
 	 */
-	protected function createComponentForm()
+	protected function createComponentDependentSelectForm1()
 	{
 		$form = new Nette\Application\UI\Form;
 
@@ -40,21 +48,40 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 			->setPrompt('---');
 
 		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'], function (array $values) {
-			$data = new NasExt\Forms\Controls\DependentSelectBoxData;
+			$data = new NasExt\Forms\Controls\DependentSelectBoxData();
 
 			switch ($values['select']) {
 				case 1:
-					$data->setItems([1 => 'First', 2 => 'Still first']);
+					$data->setItems([1 => 'First', 2 => 'Still first'])
+						->setPrompt('---');
 					break;
 
 				case 2:
-					$data->setItems([3 => 'Second', 4 => 'Still second']);
+					$data->setItems([3 => 'Second', 4 => 'Still second'])
+						->setPrompt('---');
 					break;
 			}
 
 			return $data;
 		})
+			->setPrompt('Select select first');
+
+		return $form;
+	}
+
+
+	/**
+	 * @return Nette\Application\UI\Form
+	 */
+	protected function createComponentDependentSelectForm2()
+	{
+		$form = new Nette\Application\UI\Form;
+
+		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
 			->setPrompt('---');
+
+		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'])
+			->setPrompt('Select select first');
 
 		return $form;
 	}
