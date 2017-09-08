@@ -100,7 +100,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'DependentSelectBox'], ['_do' => 'form-submit'], ['select' => 1, 'dependentSelect' => 1]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelectBox'], ['_do' => 'form-submit'], ['select' => 1, 'dependentSelect' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
