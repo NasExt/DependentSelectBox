@@ -20,7 +20,7 @@ use Nette;
  * @author Jáchym Toušek
  * @author Dusan Hudak
  */
-class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette\Application\UI\ISignalReceiver
+class DependentMultiSelectBox extends Nette\Forms\Controls\SelectBox implements Nette\Application\UI\ISignalReceiver
 {
 	/** @var string */
 	const SIGNAL_NAME = 'load';

@@ -192,12 +192,6 @@ final class DependentSelectBoxTest extends Tester\TestCase
 			'prompt' => '---',
 			'disabledWhenEmpty' => null,
 		], $response->getPayload()->dependentselectbox);
-
-
-        //var_dump($response->getPayload()->dependentselectbox);
-
-
-		//Tester\Assert::true(false);
 	}
 }
 
