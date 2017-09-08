@@ -221,7 +221,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 	/**
-	 * @throws NasExt\Forms\DependentCallbackException Callback for "frm-dependentSelectForm2-dependentSelect" must return NasExt\Forms\Controls\DependentData instance!
+	 * @throws NasExt\Forms\DependentCallbackException Callback for "frm-dependentSelectForm2-dependentSelect" must return NasExt\Forms\DependentData instance!
 	 * @return void
 	 */
 	public function testSeven()

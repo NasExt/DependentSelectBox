@@ -51,7 +51,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	 */
 	public function actionDependentSelect2Exception2()
 	{
-		$this['dependentSelectForm2']['dependentSelect']->setDependentCallback(function() {});
+		$this['dependentSelectForm2']['dependentSelect']->setDependentCallback(function () {});
 		$this->setView('dependentSelect2');
 	}
 

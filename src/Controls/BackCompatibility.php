@@ -21,3 +21,12 @@ namespace NasExt\Forms\Controls;
 class DependentSelectBoxData extends \NasExt\Forms\DependentData
 {
 }
+
+
+/**
+ * @author Ales Wita
+ * @license MIT
+ */
+class Test
+{
+}

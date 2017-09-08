@@ -62,7 +62,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 */
 	public function getControl()
 	{
-        $attrs = [];
+		$attrs = [];
 		$this->tryLoadItems();
 		$control = parent::getControl();
 
@@ -120,8 +120,8 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @param  array
-	 * @param  bool
+	 * @param array
+	 * @param bool
 	 * @return self
 	 */
 	public function setItems(array $items, $useKeys = true)
@@ -253,7 +253,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 		$dependentData = Nette\Utils\Callback::invokeArgs($this->dependentCallback, $args);
 
 		if (!($dependentData instanceof NasExt\Forms\DependentData) && !($dependentData instanceof \NasExt\Forms\Controls\DependentSelectBoxData)) {
-			throw new NasExt\Forms\DependentCallbackException('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\Controls\\DependentData instance!');
+			throw new NasExt\Forms\DependentCallbackException('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\DependentData instance!');
 		}
 
 		return $dependentData;

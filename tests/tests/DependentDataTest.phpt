@@ -62,7 +62,6 @@ final class DependentDataTest extends Tester\TestCase
 	}
 
 
-
 	/**
 	 * @return void
 	 */
