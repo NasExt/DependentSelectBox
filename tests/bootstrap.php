@@ -9,10 +9,7 @@
  * the file license.md that was distributed with this source code.
  */
 
-require_once __DIR__ . '/../src/NasExt/Forms/DependentData.php';
-require_once __DIR__ . '/../src/NasExt/Forms/Controls/BackCompatibility.php';
-
-if (@!include __DIR__ . '/../../../../vendor/autoload.php') {
+if (@!include __DIR__ . '/../vendor/autoload.php') {
 	echo 'Install Nette Tester using `composer install`';
 	exit(1);
 }
