@@ -165,7 +165,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	{
 		if ($this->parents === array_filter($this->parents, function ($p) {return !$p->hasErrors();})) {
 			$parentsValues = [];
-
 			foreach ($this->parents as $parent) {
 				$parentsValues[$parent->getName()] = $parent->getValue();
 			}
@@ -220,10 +219,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
 
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME) {
-			if ($this->dependentCallback === null) {
-				throw new Nette\InvalidStateException('Dependent callback not set.');
-			}
-
 			$parentsNames = [];
 			foreach ($this->parents as $parent) {
 				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
@@ -245,20 +240,20 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @throws Exception
+	 * @throws NasExt\Forms\DependentCallbackException
 	 * @param array
 	 * @return NasExt\Forms\Controls\DependentData
 	 */
 	private function getDependentData(array $args = [])
 	{
 		if ($this->dependentCallback === null) {
-			throw new \Exception('Dependent callback for "' . $this->getHtmlId() . '" must be set!');
+			throw new NasExt\Forms\DependentCallbackException('Dependent callback for "' . $this->getHtmlId() . '" must be set!');
 		}
 
 		$dependentData = Nette\Utils\Callback::invokeArgs($this->dependentCallback, $args);
 
 		if (!($dependentData instanceof NasExt\Forms\DependentData) && !($dependentData instanceof \NasExt\Forms\Controls\DependentSelectBoxData)) {
-			throw new \Exception('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\Controls\\DependentData instance!');
+			throw new NasExt\Forms\DependentCallbackException('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\Controls\\DependentData instance!');
 		}
 
 		return $dependentData;

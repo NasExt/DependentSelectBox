@@ -149,7 +149,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], []);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit']);
 		$response = $presenter->run($request);
 
 
@@ -196,11 +196,12 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 	/**
+	 * @throws NasExt\Forms\DependentCallbackException Dependent callback for "frm-dependentSelectForm2-dependentSelect" must be set!
 	 * @return void
 	 */
 	public function testSix()
 	{
-		/*$configurator = new Nette\Configurator();
+		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
 		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
 
@@ -209,10 +210,38 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], []);
-		$response = $presenter->run($request);  */
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect2Exception1']);
+		$response = $presenter->run($request);
+
+		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
+		Tester\Assert::true($response->getSource() instanceof Nette\Application\UI\ITemplate);
+
+		$response->getSource()->render();
+	}
 
 
+	/**
+	 * @throws NasExt\Forms\DependentCallbackException Callback for "frm-dependentSelectForm2-dependentSelect" must return NasExt\Forms\Controls\DependentData instance!
+	 * @return void
+	 */
+	public function testSeven()
+	{
+		$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect2Exception2']);
+		$response = $presenter->run($request);
+
+		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
+		Tester\Assert::true($response->getSource() instanceof Nette\Application\UI\ITemplate);
+
+		$response->getSource()->render();
 	}
 }
 
