@@ -243,6 +243,38 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$response->getSource()->render();
 	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testEight()
+	{
+		$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect2Disabled1'], ['_do' => 'dependentSelectForm2-submit'], ['select' => 1, 'dependentSelect' => 3]);
+		$response = $presenter->run($request);
+
+		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
+		Tester\Assert::true($response->getSource() instanceof Nette\Application\UI\ITemplate);
+		//Tester\Assert::true($presenter['dependentSelectForm1']['dependentSelect']->isDisabled());
+
+
+		// check source
+		$source = (string) $response->getSource();
+		$dom = Tester\DomQuery::fromHtml($source);
+
+		var_dump($dom);
+
+
+	}
 }
 
 

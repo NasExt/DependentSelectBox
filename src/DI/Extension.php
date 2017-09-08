@@ -20,7 +20,7 @@ use Nette;
  * @author Ales Wita
  * @license MIT
  */
-class Extension extends Nette\DI\CompilerExtension
+class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
 {
 	/**
 	 * @param Nette\PhpGenerator\ClassType
@@ -38,18 +38,8 @@ class Extension extends Nette\DI\CompilerExtension
 	 */
 	public static function registerControls()
 	{
-		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, $dependentCallback = null) {
-			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents, $dependentCallback);
+		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
+            return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents);
 		});
 	}
-}
-
-
-/**
- * @author Ondra Votava <ondra.votava@pixidos.com>
- * @author Ales Wita
- * @license MIT
- */
-class DependentSelectBoxExtension extends Extension
-{
 }

@@ -25,6 +25,6 @@ class DependentCallbackException extends \Exception
  * @author Ales Wita
  * @license MIT
  */
-class TestException extends \Exception
+class ParentException extends \Exception
 {
 }

@@ -26,9 +26,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	/** @var string */
 	const SIGNAL_NAME = 'load';
 
-	/** @var bool */
-	protected $disabled;
-
 	/** @var array */
 	private $parents;
 
@@ -44,14 +41,11 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 	/**
 	 * @param string
-	 * @param array|Nette\Forms\Controls\BaseControl
-	 * @param callable
+	 * @param array[Nette\Forms\IControl]
 	 */
-	public function __construct($label, $parents, $dependentCallback = null)
+	public function __construct($label, array $parents)
 	{
-		$this->parents = !is_array($parents) ? [$parents] : $parents;
-		$this->dependentCallback = $dependentCallback;
-
+		$this->parents = $parents;
 		parent::__construct($label);
 	}
 
@@ -65,19 +59,12 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 		$attrs = [];
 		$this->tryLoadItems();
 		$control = parent::getControl();
-
 		$form = $this->getForm();
-
-		if (!($form instanceof Nette\Application\UI\Form)) {
-			throw new Nette\InvalidStateException('NasExt\\Forms\\Controls\\DependentSelectBox supports only Nette\\Application\\UI\\Form.');
-		}
-
 
 		$parents = [];
 		foreach ($this->parents as $parent) {
 			$parents[$parent->getName()] = $parent->getHtmlId();
 		}
-
 
 		$attrs['data-dependentselectbox-parents'] = Nette\Utils\Json::encode($parents);
 		$attrs['data-dependentselectbox'] = $form->getPresenter()->link($this->lookupPath('Nette\\Application\\UI\\Presenter') . Nette\ComponentModel\IComponent::NAME_SEPARATOR . self::SIGNAL_NAME . '!');
@@ -94,17 +81,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	{
 		$this->tryLoadItems();
 		return parent::getValue();
-	}
-
-
-	/**
-	 * @param bool|array
-	 * @return self
-	 */
-	public function setDisabled($value = true)
-	{
-		$this->disabled = $value;
-		return $this;
 	}
 
 
@@ -159,6 +135,36 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
+	 * @throws Nette\InvalidStateException
+	 * @param string
+	 * @return void
+	 */
+	public function signalReceived($signal)
+	{
+		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
+
+		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->disabled) {
+			$parentsNames = [];
+			foreach ($this->parents as $parent) {
+				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
+			}
+
+			$data = $this->getDependentData([$parentsNames]);
+			$presenter->payload->dependentselectbox = [
+				'id' => $this->getHtmlId(),
+				'items' => $data->getPreparedItems(),
+				'value' => $data->getValue(),
+				'prompt' => $data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt(),
+				'disabledWhenEmpty' => $this->disabledWhenEmpty,
+			];
+			$presenter->sendPayload();
+		}
+	}
+
+
+	/**
+	 * @internal
+	 *
 	 * @return void
 	 */
 	protected function tryLoadItems()
@@ -210,49 +216,22 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @throws Nette\InvalidStateException
-	 * @param string
-	 * @return void
-	 */
-	public function signalReceived($signal)
-	{
-		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
-
-		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME) {
-			$parentsNames = [];
-			foreach ($this->parents as $parent) {
-				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
-			}
-
-
-			$data = $this->getDependentData([$parentsNames]);
-
-			$presenter->payload->dependentselectbox = [
-				'id' => $this->getHtmlId(),
-				'items' => $data->getPreparedItems(),
-				'value' => $data->getValue(),
-				'prompt' => $data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt(),
-				'disabledWhenEmpty' => $this->disabledWhenEmpty,
-			];
-			$presenter->sendPayload();
-		}
-	}
-
-
-	/**
+	 * @internal
+	 *
 	 * @throws NasExt\Forms\DependentCallbackException
 	 * @param array
-	 * @return NasExt\Forms\Controls\DependentData
+	 * @return NasExt\Forms\DependentData
 	 */
-	private function getDependentData(array $args = [])
+	protected function getDependentData(array $args = [])
 	{
+
 		if ($this->dependentCallback === null) {
 			throw new NasExt\Forms\DependentCallbackException('Dependent callback for "' . $this->getHtmlId() . '" must be set!');
 		}
 
 		$dependentData = Nette\Utils\Callback::invokeArgs($this->dependentCallback, $args);
 
-		if (!($dependentData instanceof NasExt\Forms\DependentData) && !($dependentData instanceof \NasExt\Forms\Controls\DependentSelectBoxData)) {
+		if (!($dependentData instanceof NasExt\Forms\DependentData) && !($dependentData instanceof NasExt\Forms\Controls\DependentSelectBoxData)) {
 			throw new NasExt\Forms\DependentCallbackException('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\DependentData instance!');
 		}
 
