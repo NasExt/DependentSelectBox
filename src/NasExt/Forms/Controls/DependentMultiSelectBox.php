@@ -35,6 +35,9 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	private $dependentCallback;
 
 	/** @var bool */
+	private $multiple;
+
+	/** @var bool */
 	private $disabledWhenEmpty;
 
 	/** @var mixed */
@@ -45,11 +48,13 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 * @param string
 	 * @param array|Nette\Forms\Controls\BaseControl
 	 * @param callable
+	 * @param bool
 	 */
-	public function __construct($label, $parents, callable $dependentCallback)
+	public function __construct($label, $parents, callable $dependentCallback, $multiple = false)
 	{
 		$this->parents = !is_array($parents) ? [$parents] : $parents;
 		$this->setDependentCallback($dependentCallback);
+		$this->multiple = $multiple;
 
 		parent::__construct($label);
 	}
@@ -63,6 +68,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	{
 		$this->tryLoadItems();
 		$control = parent::getControl();
+		$attrs = ['multiple' => $this->multiple];
 
 		if ($this->dependentCallback !== null) {
 			$form = $this->getForm();
@@ -93,6 +99,11 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	public function getValue()
 	{
 		$this->tryLoadItems();
+
+		if ($this->multiple) {
+			return array_values(array_intersect($this->value, array_keys($this->items)));
+		}
+
 		return parent::getValue();
 	}
 
@@ -129,7 +140,12 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 		parent::setItems($items, $useKeys);
 
 		if ($this->tempValue !== '') {// '' it's prompt value
-			parent::setValue($this->tempValue);
+			if ($this->multiple) {
+				$this->setMultipleValue($this->tempValue);
+
+			} else {
+				parent::setValue($this->tempValue);
+			}
 		}
 
 		return $this;
@@ -226,6 +242,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 			}
 
 			$parentsNames = [];
+
 			foreach ($this->parents as $parent) {
 				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
 			}
@@ -298,11 +315,67 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
+	 * @return string
+	 */
+	public function getHtmlName()
+	{
+		return parent::getHtmlName() . ($this->multiple ? '[]' : '');
+	}
+
+
+	/**
 	 * @return void
 	 */
 	public function loadHttpData()
 	{
-		parent::loadHttpData();
-		return;
+		if (!$this->multiple) {
+			parent::loadHttpData();
+			return;
+		}
+
+		$this->value = array_keys(array_flip($this->getHttpData(Nette\Forms\Form::DATA_TEXT)));
+
+		if (is_array($this->disabled)) {
+			$this->value = array_diff($this->value, array_keys($this->disabled));
+		}
+	}
+
+
+	/**
+	 * @throws Nette\InvalidArgumentException
+	 * @param  array
+	 * @return self
+	 */
+	private function setMultipleValue($values)
+	{
+		if (is_scalar($values) || $values === null) {
+			$values = (array) $values;
+
+		} elseif (!is_array($values)) {
+			throw new Nette\InvalidArgumentException('Value must be array or null, ' . gettype($values) . ' given in field "' . $this->name . '".');
+		}
+
+
+		$flip = [];
+
+		foreach ($values as $value) {
+			if (!is_scalar($value) && !method_exists($value, '__toString')) {
+				throw new Nette\InvalidArgumentException('Values must be scalar, ' . gettype($value) . ' given in field "' . $this->name . '".');
+			}
+
+			$flip[(string) $value] = true;
+		}
+
+
+		$values = array_keys($flip);
+
+		if ($this->checkAllowedValues && ($diff = array_diff($values, array_keys($this->items)))) {
+			$set = Nette\Utils\Strings::truncate(implode(', ', array_map(function ($s) { return var_export($s, true); }, array_keys($this->items))), 70, '...');
+			$vals = (count($diff) > 1 ? 's' : '') . " '" . implode("', '", $diff) . "'";
+			throw new Nette\InvalidArgumentException('Value ' . $vals . ' are out of allowed set [' . $set . '] in field "' . $this->name . '".');
+		}
+
+		$this->value = $values;
+		return $this;
 	}
 }

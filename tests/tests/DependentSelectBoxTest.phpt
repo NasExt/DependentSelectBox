@@ -167,6 +167,8 @@ final class DependentSelectBoxTest extends Tester\TestCase
 	 */
 	public function testFive()
 	{
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';// make ajax request
+
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
 		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
@@ -175,18 +177,27 @@ final class DependentSelectBoxTest extends Tester\TestCase
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
 
 		$presenter = $presenterFactory->createPresenter('Base');
-        $presenter->getHttpResponse()->addHeader('X-Requested-With', 'XMLHttpRequest');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelectBox'], ['_do' => 'form-dependentSelect-load'], []);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelectBox', 'do' => 'form-dependentSelect-load', 'select' => 1]);
 		$response = $presenter->run($request);
 
-		var_dump($response);
+		Tester\Assert::true($response instanceof Nette\Application\Responses\JsonResponse);
+		Tester\Assert::same([
+			'id' => 'frm-form-dependentSelect',
+			'items' => [
+				0 => ['key' => 1, 'value' => 'First'],
+				1 => ['key' => 2, 'value' => 'Still first'],
+			],
+			'value' => null,
+			'prompt' => '---',
+			'disabledWhenEmpty' => null,
+		], $response->getPayload()->dependentselectbox);
 
 
+        //var_dump($response->getPayload()->dependentselectbox);
 
 
-
-		Tester\Assert::true(false);
+		//Tester\Assert::true(false);
 	}
 }
 
