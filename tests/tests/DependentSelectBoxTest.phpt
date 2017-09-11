@@ -248,7 +248,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 	/**
 	 * @return void
 	 */
-	public function testEight()
+	/*public function testEight()
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
@@ -274,7 +274,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 		var_dump($dom);
 
 
-	}
+	}*/
 }
 
 
