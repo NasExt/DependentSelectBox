@@ -181,7 +181,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 			if ($this->getForm()->isSubmitted()) {
-				$this->setValue($this->getValue());
+				$this->setValue($this->value);
 
 			} elseif ($this->tempValue !== null) {
 				$this->setValue($this->tempValue);
