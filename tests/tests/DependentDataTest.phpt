@@ -51,12 +51,12 @@ final class DependentDataTest extends Tester\TestCase
 
 		Tester\Assert::same($items, $data->getItems());
 		Tester\Assert::same([
-			['key' => 0, 'value' => 1],
-			['key' => 1, 'value' => 2],
-			['key' => 2, 'value' => 3],
-			['key' => 3, 'value' => 4],
-			['key' => 4, 'value' => 5],
-		], $data->getPreparedItems());
+			['key' => 0, 'value' => '1', 'attributes' => ['value' => 0, 'disabled' => true]],
+			['key' => 1, 'value' => '2', 'attributes' => ['value' => 1]],
+			['key' => 2, 'value' => '3', 'attributes' => ['value' => 2]],
+			['key' => 3, 'value' => '4', 'attributes' => ['value' => 3]],
+			['key' => 4, 'value' => '5', 'attributes' => ['value' => 4, 'disabled' => true]],
+		], $data->getPreparedItems([0 => true, 4 => true]));
 		Tester\Assert::same($value, $data->getValue());
 		Tester\Assert::same($prompt, $data->getPrompt());
 	}
@@ -79,12 +79,12 @@ final class DependentDataTest extends Tester\TestCase
 
 		Tester\Assert::same($items, $data->getItems());
 		Tester\Assert::same([
-			['key' => 0, 'value' => 1],
-			['key' => 1, 'value' => 2],
-			['key' => 2, 'value' => 3],
-			['key' => 3, 'value' => 4],
-			['key' => 4, 'value' => 5],
-		], $data->getPreparedItems());
+			['key' => 0, 'value' => '1', 'attributes' => ['value' => 0, 'disabled' => true]],
+			['key' => 1, 'value' => '2', 'attributes' => ['value' => 1]],
+			['key' => 2, 'value' => '3', 'attributes' => ['value' => 2]],
+			['key' => 3, 'value' => '4', 'attributes' => ['value' => 3]],
+			['key' => 4, 'value' => '5', 'attributes' => ['value' => 4, 'disabled' => true]],
+		], $data->getPreparedItems([0 => true, 4 => true]));
 		Tester\Assert::same($value, $data->getValue());
 		Tester\Assert::same($prompt, $data->getPrompt());
 	}

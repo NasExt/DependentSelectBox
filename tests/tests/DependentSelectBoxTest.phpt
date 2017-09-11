@@ -185,8 +185,8 @@ final class DependentSelectBoxTest extends Tester\TestCase
 		Tester\Assert::same([
 			'id' => 'frm-dependentSelectForm1-dependentSelect',
 			'items' => [
-				0 => ['key' => 1, 'value' => 'First'],
-				1 => ['key' => 2, 'value' => 'Still first'],
+				1 => ['key' => 1, 'value' => 'First', 'attributes' => ['value' => 1]],
+				2 => ['key' => 2, 'value' => 'Still first', 'attributes' => ['value' => 2]],
 			],
 			'value' => null,
 			'prompt' => '---',

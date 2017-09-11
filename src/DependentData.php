@@ -101,15 +101,16 @@ class DependentData
 			}
 
 			// disable element
-			if (is_array($disabledItems) && array_key_exists($key, $disabledItems)) {
-				$el->disabled($disabledItems[$key]);
+			if (is_array($disabledItems) && array_key_exists($key, $disabledItems) && $disabledItems[$key] === true) {
+				$el->disabled(true);
 			}
 
-			$items[] = [
+			$items[$key] = [
 				'key' => $el->getValue(),
 				'value' => $el->getText(),
 			];
 
+			end($items);
 			$lKey = key($items);
 			foreach ($el->attrs as $attr => $val) {
 				$items[$lKey]['attributes'][$attr] = $val;

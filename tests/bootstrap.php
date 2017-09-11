@@ -15,13 +15,13 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 	exit(1);
 }
 
-
-/*require_once __DIR__ . '/../src/Controls/DependentMultiSelectBox.php';
+   /*
+require_once __DIR__ . '/../src/Controls/DependentMultiSelectBox.php';
 require_once __DIR__ . '/../src/Controls/DependentSelectBox.php';
-require_once __DIR__ . '/../src/DI/Extension.php';
+require_once __DIR__ . '/../src/Extension.php';
 require_once __DIR__ . '/../src/DependentData.php';
 require_once __DIR__ . '/../src/Exceptions.php';
-require_once __DIR__ . '/../src/Controls/BackCompatibility.php';*/
+require_once __DIR__ . '/../src/Controls/BackCompatibility.php';  */
 
 require_once __DIR__ . '/app/presenters/BasePresenter.php';
 require_once __DIR__ . '/app/router/Router.php';
