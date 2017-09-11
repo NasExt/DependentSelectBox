@@ -56,8 +56,9 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 */
 	public function getControl()
 	{
-		$attrs = [];
 		$this->tryLoadItems();
+
+		$attrs = [];
 		$control = parent::getControl();
 		$form = $this->getForm();
 
@@ -143,7 +144,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	{
 		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
 
-		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->disabled) {
+		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
 			$parentsNames = [];
 			foreach ($this->parents as $parent) {
 				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
@@ -154,7 +155,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 				'id' => $this->getHtmlId(),
 				'items' => $data->getPreparedItems(),
 				'value' => $data->getValue(),
-				'prompt' => $data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt(),
+				'prompt' => $data->getPrompt() === null ? $this->translate($this->getPrompt()) : $this->translate($data->getPrompt()),
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,
 			];
 			$presenter->sendPayload();
@@ -167,7 +168,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 *
 	 * @return void
 	 */
-	protected function tryLoadItems()
+	private function tryLoadItems()
 	{
 		if ($this->parents === array_filter($this->parents, function ($p) {return !$p->hasErrors();})) {
 			$parentsValues = [];
@@ -180,10 +181,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 			if ($this->getForm()->isSubmitted()) {
-				$this->setValue($this->value);
-
-			} elseif ($this->value !== null) {
-				$this->setValue($this->value);
+				$this->setValue($this->getValue());
 
 			} elseif ($this->tempValue !== null) {
 				$this->setValue($this->tempValue);
@@ -194,18 +192,15 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 			if (count($items) > 0) {
+				$this->loadHttpData();
+
+				$this->setItems($items)
+					->setPrompt($data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt());
+
 				if ($this->disabledWhenEmpty === true && $this->disabled !== true) {
 					$this->setDisabled(false);
 					$this->setOmitted(false);
 				}
-
-				if ($this->disabled === true) {
-					$this->setDisabled(true);
-				}
-
-				$this->loadHttpData();
-				$this->setItems($items);
-
 			} else {
 				if ($this->disabledWhenEmpty === true) {
 					$this->setDisabled();
@@ -222,7 +217,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 * @param array
 	 * @return NasExt\Forms\DependentData
 	 */
-	protected function getDependentData(array $args = [])
+	private function getDependentData(array $args = [])
 	{
 
 		if ($this->dependentCallback === null) {

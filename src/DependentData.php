@@ -11,6 +11,8 @@
 
 namespace NasExt\Forms;
 
+use Nette;
+
 
 /**
  * @author Dusan Hudak
