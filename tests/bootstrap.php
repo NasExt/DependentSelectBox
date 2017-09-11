@@ -15,7 +15,8 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 	exit(1);
 }
 
-   /*
+
+/*
 require_once __DIR__ . '/../src/Controls/DependentMultiSelectBox.php';
 require_once __DIR__ . '/../src/Controls/DependentSelectBox.php';
 require_once __DIR__ . '/../src/Extension.php';

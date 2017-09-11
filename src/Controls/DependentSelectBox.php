@@ -219,7 +219,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 	 */
 	private function getDependentData(array $args = [])
 	{
-
 		if ($this->dependentCallback === null) {
 			throw new NasExt\Forms\DependentCallbackException('Dependent callback for "' . $this->getHtmlId() . '" must be set!');
 		}
