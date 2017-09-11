@@ -87,30 +87,32 @@ class DependentData
 
 
 	/**
+	 * @param array
 	 * @return array
 	 */
-	public function getPreparedItems()
+	public function getPreparedItems($disabledItems = null)
 	{
 		$items = [];
 		foreach ($this->items as $key => $item) {
-			if ($item instanceof Nette\Utils\Html) {
-				$items[] = [
-					'key' => $item->getValue(),
-					'value' => $item->getText(),
-				];
-
-				end($items);
-				$key = key($items);
-
-				foreach ($item->attrs as $attr => $val) {
-					$items[$key]['attributes'][$attr] = $val;
-				}
-
+			if (!($item instanceof Nette\Utils\Html)) {
+				$el = Nette\Utils\Html::el('option')->value($key)->setText($item);
 			} else {
-				$items[] = [
-					'key' => $key,
-					'value' => $item,
-				];
+				$el = $item;
+			}
+
+			// disable element
+			if (is_array($disabledItems) && array_key_exists($key, $disabledItems)) {
+				$el->disabled($disabledItems[$key]);
+			}
+
+			$items[] = [
+				'key' => $el->getValue(),
+				'value' => $el->getText(),
+			];
+
+			$lKey = key($items);
+			foreach ($el->attrs as $attr => $val) {
+				$items[$lKey]['attributes'][$attr] = $val;
 			}
 		}
 

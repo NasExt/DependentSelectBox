@@ -153,7 +153,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 			$data = $this->getDependentData([$parentsNames]);
 			$presenter->payload->dependentselectbox = [
 				'id' => $this->getHtmlId(),
-				'items' => $data->getPreparedItems(),
+				'items' => $data->getPreparedItems(!is_array($this->disabled) ?: $this->disabled),
 				'value' => $data->getValue(),
 				'prompt' => $data->getPrompt() === null ? $this->translate($this->getPrompt()) : $this->translate($data->getPrompt()),
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,

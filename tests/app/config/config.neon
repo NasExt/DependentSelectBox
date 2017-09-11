@@ -1,5 +1,5 @@
 extensions:
-	dependentSelectBox: NasExt\Forms\DI\DependentSelectBoxExtension
+	dependentSelectBox: NasExt\Forms\Extension
 
 application:
 	mapping:

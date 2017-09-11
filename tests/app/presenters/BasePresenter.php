@@ -123,6 +123,6 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 				break;
 		}
 
-    	return $data;
+		return $data;
 	}
 }
