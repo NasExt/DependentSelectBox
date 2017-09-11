@@ -69,6 +69,18 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 
 	/**
+	 * @return void
+	 */
+	public function actionDependentSelect2Disabled2()
+	{
+		$this['dependentSelectForm2']['dependentSelect']->setDependentCallback([$this, 'dependentCallback'])
+			->setDisabled([2]);
+
+		$this->setView('dependentSelect2');
+	}
+
+
+	/**
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentDependentSelectForm1()
@@ -98,6 +110,98 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'])
 			->setPrompt('Select select first');
+
+		return $form;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect1()
+	{
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2()
+	{
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2Exception1()
+	{
+		$this->setView('dependentMultiSelect2');
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2Exception2()
+	{
+		$this['dependentMultiSelectForm2']['dependentMultiSelect']->setDependentCallback(function () {});
+		$this->setView('dependentMultiSelect2');
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2Disabled1()
+	{
+		$this['dependentMultiSelectForm2']['dependentMultiSelect']->setDependentCallback([$this, 'dependentCallback'])
+			->setDisabled();
+
+		$this->setView('dependentMultiSelect2');
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2Disabled2()
+	{
+		$this['dependentMultiSelectForm2']['dependentMultiSelect']->setDependentCallback([$this, 'dependentCallback'])
+			->setDisabled([2]);
+
+		$this->setView('dependentMultiSelect2');
+	}
+
+
+	/**
+	 * @return Nette\Application\UI\Form
+	 */
+	protected function createComponentDependentMultiSelectForm1()
+	{
+		$form = new Nette\Application\UI\Form;
+
+		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
+			->setPrompt('---');
+
+		$form->addDependentMultiSelectBox('dependentMultiSelect', 'Dependent multi select', $form['select'])
+			->setDependentCallback([$this, 'dependentCallback']);
+
+		return $form;
+	}
+
+
+	/**
+	 * @return Nette\Application\UI\Form
+	 */
+	protected function createComponentDependentMultiSelectForm2()
+	{
+		$form = new Nette\Application\UI\Form;
+
+		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
+			->setPrompt('---');
+
+		$form->addDependentMultiSelectBox('dependentMultiSelect', 'Dependent multi select', $form['select']);
 
 		return $form;
 	}

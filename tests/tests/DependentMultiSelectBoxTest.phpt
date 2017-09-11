@@ -24,7 +24,7 @@ require_once __DIR__ . '/../bootstrap.php';
  * @author Ales Wita
  * @license MIT
  */
-final class DependentSelectBoxTest extends Tester\TestCase
+final class DependentMultiSelectBoxTest extends Tester\TestCase
 {
 	/**
 	 * @return void
@@ -40,7 +40,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1']);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect1']);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
@@ -48,19 +48,19 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 		// check form
-		$form = $presenter['dependentSelectForm1'];
+		$form = $presenter['dependentMultiSelectForm1'];
 
 		Tester\Assert::true($form instanceof Nette\Application\UI\Form);
 
 
-		// check dependent select
-		$dependentSelect = $form['dependentSelect'];
+		// check dependent multi select
+		$dependentMultiSelect = $form['dependentMultiSelect'];
 
-		Tester\Assert::true($dependentSelect instanceof NasExt\Forms\Controls\DependentSelectBox);
+		Tester\Assert::true($dependentMultiSelect instanceof NasExt\Forms\Controls\DependentMultiSelectBox);
 
 
 		// check control
-		$control = $dependentSelect->getControl();
+		$control = $dependentMultiSelect->getControl();
 
 		Tester\Assert::true($control instanceof Nette\Utils\Html);
 
@@ -71,18 +71,17 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 		// dependent select tag
-		$data = $dom->find('select[name="dependentSelect"]');
+		$data = $dom->find('select[name="dependentMultiSelect[]"]');
 
 		Tester\Assert::count(1, $data);
 
 		$foo = (array) $data[0];
-		Tester\Assert::count(4, $foo['@attributes']);
+		Tester\Assert::count(5, $foo['@attributes']);
 		Tester\Assert::same($control->getAttribute('name'), $foo['@attributes']['name']);
 		Tester\Assert::same($control->getAttribute('id'), $foo['@attributes']['id']);
+		Tester\Assert::same('multiple', $foo['@attributes']['multiple']);
 		Tester\Assert::same($control->getAttribute('data-dependentselectbox'), $foo['@attributes']['data-dependentselectbox']);
 		Tester\Assert::same($control->getAttribute('data-dependentselectbox-parents'), $foo['@attributes']['data-dependentselectbox-parents']);
-
-		Tester\Assert::same('Select select first', $foo['option']);
 	}
 
 
@@ -100,23 +99,23 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], ['select' => 1, 'dependentSelect' => 1]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect1'], ['_do' => 'dependentMultiSelectForm1-submit'], ['select' => 1, 'dependentMultiSelect' => [1]]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
 		Tester\Assert::true($response->getSource() instanceof Nette\Application\UI\ITemplate);
 
 
-		// check dependent select
-		$dependentSelect = $presenter['dependentSelectForm1']['dependentSelect'];
+		// check multi dependent select
+		$dependentMultiSelect = $presenter['dependentMultiSelectForm1']['dependentMultiSelect'];
 
-		Tester\Assert::true($dependentSelect instanceof NasExt\Forms\Controls\DependentSelectBox);
-		Tester\Assert::same(1, $dependentSelect->getValue());
+		Tester\Assert::true($dependentMultiSelect instanceof NasExt\Forms\Controls\DependentMultiSelectBox);
+		Tester\Assert::same([1], $dependentMultiSelect->getValue());
 	}
 
 
 	/**
-	 * @throws Nette\InvalidArgumentException Value '3' is out of allowed set [1, 2] in field 'dependentSelect'.
+	 * @throws Nette\InvalidArgumentException Values '3', '4' are out of allowed set [1, 2] in field 'dependentMultiSelect'.
 	 * @return void
 	 */
 	public function testThree()
@@ -130,8 +129,10 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit'], ['select' => 1, 'dependentSelect' => 3]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect1'], ['_do' => 'dependentMultiSelectForm1-submit'], ['select' => 1, 'dependentMultiSelect' => [3, 4]]);
 		$response = $presenter->run($request);
+
+		$presenter['dependentMultiSelectForm1']->getValues();// ??
 	}
 
 
@@ -149,16 +150,16 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect1'], ['_do' => 'dependentSelectForm1-submit']);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect1'], ['_do' => 'dependentMultiSelectForm1-submit']);
 		$response = $presenter->run($request);
 
 
 		// check form
-		$form = $presenter['dependentSelectForm1'];
+		$form = $presenter['dependentMultiSelectForm1'];
 
 		Tester\Assert::true($form->isSubmitted());
 		Tester\Assert::true($form->isSuccess());
-		Tester\Assert::same(['select' => null, 'dependentSelect' => null], (array) $form->getValues());
+		Tester\Assert::same(['select' => null, 'dependentMultiSelect' => []], (array) $form->getValues());
 	}
 
 
@@ -178,25 +179,25 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1', 'do' => 'dependentSelectForm1-dependentSelect-load', 'select' => 1]);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect1', 'do' => 'dependentMultiSelectForm1-dependentMultiSelect-load', 'select' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\JsonResponse);
 		Tester\Assert::same([
-			'id' => 'frm-dependentSelectForm1-dependentSelect',
+			'id' => 'frm-dependentMultiSelectForm1-dependentMultiSelect',
 			'items' => [
 				1 => ['key' => 1, 'value' => 'First', 'attributes' => ['value' => 1]],
 				2 => ['key' => 2, 'value' => 'Still first', 'attributes' => ['value' => 2]],
 			],
 			'value' => null,
-			'prompt' => '---',
+			'prompt' => false,
 			'disabledWhenEmpty' => null,
 		], $response->getPayload()->dependentselectbox);
 	}
 
 
 	/**
-	 * @throws NasExt\Forms\DependentCallbackException Dependent callback for "frm-dependentSelectForm2-dependentSelect" must be set!
+	 * @throws NasExt\Forms\DependentCallbackException Dependent callback for "frm-dependentMultiSelectForm2-dependentMultiSelect" must be set!
 	 * @return void
 	 */
 	public function testSix()
@@ -210,7 +211,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect2Exception1']);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect2Exception1']);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
@@ -221,7 +222,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 	/**
-	 * @throws NasExt\Forms\DependentCallbackException Callback for "frm-dependentSelectForm2-dependentSelect" must return NasExt\Forms\DependentData instance!
+	 * @throws NasExt\Forms\DependentCallbackException Callback for "frm-dependentMultiSelectForm2-dependentMultiSelect" must return NasExt\Forms\DependentData instance!
 	 * @return void
 	 */
 	public function testSeven()
@@ -235,7 +236,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect2Exception2']);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect2Exception2']);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\TextResponse);
@@ -259,12 +260,12 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect2Disabled1'], ['_do' => 'dependentSelectForm2-submit'], ['select' => 1, 'dependentSelect' => 2]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect2Disabled1'], ['_do' => 'dependentMultiSelectForm2-submit'], ['select' => 1, 'dependentMultiSelect' => [2]]);
 		$response = $presenter->run($request);
 
 
 		// check form
-		$form = $presenter['dependentSelectForm2'];
+		$form = $presenter['dependentMultiSelectForm2'];
 
 		Tester\Assert::true($form->isSubmitted());
 		Tester\Assert::true($form->isSuccess());
@@ -273,6 +274,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 
 	/**
+	 * @throws Nette\InvalidArgumentException NasExt\Forms\Controls\DependentMultiSelectBox not supported disabled items!
 	 * @return void
 	 */
 	public function testNine()
@@ -286,19 +288,19 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect2Disabled2'], ['_do' => 'dependentSelectForm2-submit'], ['select' => 1, 'dependentSelect' => 2]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect2Disabled2'], ['_do' => 'dependentMultiSelectForm2-submit'], ['select' => 1, 'dependentMultiSelect' => 2]);
 		$response = $presenter->run($request);
 
 
 		// check form
-		$form = $presenter['dependentSelectForm2'];
+		//$form = $presenter['dependentMultiSelectForm2'];
 
-		Tester\Assert::true($form->isSubmitted());
-		Tester\Assert::true($form->isSuccess());
-		Tester\Assert::same(['select' => 1, 'dependentSelect' => null], (array) $form->getValues());
+		//Tester\Assert::true($form->isSubmitted());
+		//Tester\Assert::true($form->isSuccess());
+		//Tester\Assert::same(['select' => 1, 'dependentMultiSelect' => []], (array) $form->getValues());
 	}
 }
 
 
-$test = new DependentSelectBoxTest;
+$test = new DependentMultiSelectBoxTest;
 $test->run();

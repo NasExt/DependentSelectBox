@@ -80,10 +80,9 @@
 						var $select = $('#' + data.id);
 						$select.empty();
 
-						if (data.prompt != false) {
-							$('<option>')
-								.attr('value', '').text(data.prompt)
-								.appendTo($select);
+						// prompt set
+						if (data.prompt !== false && data.prompt !== undefined) {
+							$('<option>').attr('value', '').text(data.prompt).appendTo($select);
 						}
 
 						if (Object.keys(data.items).length > 0) {

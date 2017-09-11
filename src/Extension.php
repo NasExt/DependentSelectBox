@@ -41,8 +41,8 @@ class Extension extends Nette\DI\CompilerExtension
 		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
 			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents);
 		});
-		Nette\Forms\Container::extensionMethod('addDependentMultiSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, $callback) {
-			return $container[$name] = new NasExt\Forms\Controls\DependentMultiSelectBox($label, $parents, $callback, true);
+		Nette\Forms\Container::extensionMethod('addDependentMultiSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
+			return $container[$name] = new NasExt\Forms\Controls\DependentMultiSelectBox($label, $parents);
 		});
 	}
 }
