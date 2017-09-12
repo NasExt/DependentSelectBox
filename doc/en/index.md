@@ -1,6 +1,5 @@
 # NasExt/DependentSelectBox
-DependentSelectBox for [Nette Framework](https://nette.org).
-This dependent select box support dependence for more form controls , not only for select boxes but also dependence for text input, textarea and more.
+DependentSelectBox for [Nette Framework](https://nette.org). This dependent select box support dependence for more form controls , not only for select boxes but also dependence for text input, textarea and more.
 
 ## Installation
 The best way to install AlesWita/DropzoneUploader is using [Composer](http://getcomposer.org/):
@@ -11,26 +10,29 @@ $ composer require nasext/dependent-select-box
 
 Initialization in your `bootstrap.php`:
 ```php
-NasExt\Forms\Extension::register();
+NasExt\Forms\Extension::registerControls();
 ```
 
 
-or enable the extension using your neon config
+Or enable the extension using your neon config:
 ```neon
 extensions:
 	dependentSelectBox: NasExt\Forms\Extension
 ```
 
 
-Include from client-side:
-- dependentSelectBox.js
+Include from client-side folder:
+```
+dependentSelectBox.js
+```
 
 
 Initialize DependentSelectBox:
 ```js
 // @param callback a handler to be called when Ajax requests complete
-$('[data-dependentselectbox]').dependentSelectBox( callback );
+$('[data-dependentselectbox]').dependentSelectBox(callback);
 ```
+
 
 ## Usage
 How to use DependentSelectBox in form:
@@ -41,11 +43,12 @@ $form->addDependentSelectBox('name', 'Label', ...dependent controls)
 	})
 ```
 
+
 ```php
 $country = [
 	1 => 'Slovakia',
-	2 => 'Czech',
-	3 => 'Usa',
+	2 => 'Czechia',
+	3 => 'USA',
 ];
 
 $citySlovakia = [
@@ -54,7 +57,7 @@ $citySlovakia = [
 	3 => 'Zilina',
 ];
 
-$cityCzech = [
+$cityCzechia = [
 	1 => 'Praha',
 	2 => 'Brno',
 	3 => 'Ostrava',
@@ -86,20 +89,20 @@ $street3 = [
 
 
 $form->addSelect('country', 'Country', $country)
-	->setPrompt('- Select -');
+	->setPrompt('--- Select ---');
 
 $form->addText('text', 'Text')
 	->setAttribute('placeholder', 'Text');
 
 $form->addDependentSelectBox('city', 'City', $form['country'])
-	->setDependentCallback(function ($values) use ($citySlovakia, $cityCzech, $cityUsa) {
+	->setDependentCallback(function ($values) use ($citySlovakia, $cityCzechia, $cityUsa) {
 		$data = new \NasExt\Forms\DependentData;
 
 		if ($values['country'] === 1) {
 			return $data->setItems($citySlovakia)->setPrompt('---');
 
 		} elseif ($values['country'] === 2) {
-			return $data->setItems($cityCzech)->setPrompt('---');
+			return $data->setItems($cityCzechia)->setPrompt('---');
 
 		} elseif ($values['country'] === 3) {
 			return $data->setItems($cityUsa)->setPrompt('---');
@@ -111,44 +114,54 @@ $form->addDependentSelectBox('city', 'City', $form['country'])
 
 $form->addDependentSelectBox('street', 'Street', $form['city'], $form['text'])
 	->setDependentCallback(function ($values) use ($street1, $street2, $street3) {
-		$data = new \NasExt\Forms\DependentData();
+		$data = new \NasExt\Forms\DependentData;
 
 		if ($values['city'] === 1) {
 			if (!empty($values['text'])) {
-				$street1 = array_merge($street1, array(10 => 'Value from Text input: ' . $values['text']));
+				$street1 = array_merge($street1, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
 			return $data->setItems($street1);
+
 		} elseif ($values['city'] === 2) {
 			if (!empty($values['text'])) {
-				$street2 = array_merge($street2, array(10 => 'Value from Text input: ' . $values['text']));
+				$street2 = array_merge($street2, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
 			return $data->setItems($street2);
+
 		} elseif ($values['city'] === 3) {
-			if (!empty($values["text"])) {
-				$street3 = array_merge($street3, array(10 => 'Value from Text input: ' . $values['text']));
+			if (!empty($values['text'])) {
+				$street3 = array_merge($street3, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
 			return $data->setItems($street3);
+
 		} else {
 			return $data;
 		}
-	})->setPrompt('- Select -');
+	})->setPrompt('--- Select ---');
 ```
 
-You can set select box as disabled with setDisabledWhenEmpty(TRUE) when is empty, but don't remember disabled select box does not support validation
+
+You can set select box as disabled with setDisabledWhenEmpty(true) when is empty, but don't remember, disabled select box does not support validation
 ```php
-$form->addDependentSelectBox('city', 'City', array($form["country"]), function ($values) use ($citySlovakia, $cityCzech, $cityUsa) {
-	$data = new \NasExt\Forms\Controls\DependentSelectBoxData();
-	if ($values['country'] == 1) {
-		return $data->setItems($citySlovakia);
-	} elseif ($values['country'] == 2) {
-		return $data->setItems($cityCzech);
-	} elseif ($values['country'] == 3) {
-		return $data->setItems($cityUsa);
-	} else {
-		return $data;
-	}
-})->setDisabledWhenEmpty(TRUE)->setPrompt('- Select -');
-```
+$form->addDependentSelectBox('city', 'City', $form['country'])
+	->setDependentCallback(function ($values) use ($citySlovakia, $cityCzechia, $cityUsa) {
+		$data = new \NasExt\Forms\Controls\DependentSelectBoxData;
+		if ($values['country'] === 1) {
+			return $data->setItems($citySlovakia);
+
+		} elseif ($values['country'] === 2) {
+			return $data->setItems($cityCzechia);
+
+		} elseif ($values['country'] === 3) {
+			return $data->setItems($cityUsa);
+
+		} else {
+			return $data;
+		}
+	})
+	->setDisabledWhenEmpty(true)
+	->setPrompt('--- Select ---');
+	```

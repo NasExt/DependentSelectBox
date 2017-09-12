@@ -297,6 +297,34 @@ final class DependentSelectBoxTest extends Tester\TestCase
 		Tester\Assert::true($form->isSuccess());
 		Tester\Assert::same(['select' => 1, 'dependentSelect' => null], (array) $form->getValues());
 	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testTen()
+	{
+		$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentSelect2Disabled3'], ['_do' => 'dependentSelectForm2-submit'], ['select' => 3]);
+		$response = $presenter->run($request);
+
+
+		// check form
+		$form = $presenter['dependentSelectForm2'];
+
+		Tester\Assert::true($form->isSubmitted());
+		Tester\Assert::true($form->isSuccess());
+		Tester\Assert::true($form['dependentSelect']->isOmitted());
+		Tester\Assert::same(['select' => 3], (array) $form->getValues());
+	}
 }
 
 

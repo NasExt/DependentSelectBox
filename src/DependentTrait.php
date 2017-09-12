@@ -35,7 +35,6 @@ trait DependentTrait
 
 
 	/**
-	 * @throws Nette\InvalidStateException
 	 * @return Nette\Utils\Html
 	 */
 	public function getControl()

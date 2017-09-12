@@ -55,7 +55,6 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 
 	/**
-	 * @throws Nette\InvalidStateException
 	 * @param string
 	 * @return void
 	 */
@@ -112,14 +111,8 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 				$this->loadHttpData();
 
 				$this->setItems($items);
-
-				if ($this->disabledWhenEmpty === true && $this->disabled !== true) {
-					$this->setDisabled(false);
-					$this->setOmitted(false);
-				}
-
 			} else {
-				if ($this->disabledWhenEmpty === true) {
+				if ($this->disabledWhenEmpty === true && !$this->isDisabled()) {
 					$this->setDisabled();
 				}
 			}

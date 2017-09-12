@@ -41,7 +41,6 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @throws Nette\InvalidStateException
 	 * @param string
 	 * @return void
 	 */
@@ -99,14 +98,8 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 				$this->setItems($items)
 					->setPrompt($data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt());
-
-				if ($this->disabledWhenEmpty === true && $this->disabled !== true) {
-					$this->setDisabled(false);
-					$this->setOmitted(false);
-				}
-
 			} else {
-				if ($this->disabledWhenEmpty === true) {
+				if ($this->disabledWhenEmpty === true && !$this->isDisabled()) {
 					$this->setDisabled();
 				}
 			}

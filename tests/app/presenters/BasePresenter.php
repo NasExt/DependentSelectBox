@@ -81,6 +81,18 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 
 	/**
+	 * @return void
+	 */
+	public function actionDependentSelect2Disabled3()
+	{
+		$this['dependentSelectForm2']['dependentSelect']->setDependentCallback([$this, 'dependentCallback'])
+			->setDisabledWhenEmpty();
+
+		$this->setView('dependentSelect2');
+	}
+
+
+	/**
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentDependentSelectForm1()
@@ -105,7 +117,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		$form = new Nette\Application\UI\Form;
 
-		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
+		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second', 3 => 'Third'])
 			->setPrompt('---');
 
 		$form->addDependentSelectBox('dependentSelect', 'Dependent select', $form['select'])
@@ -175,6 +187,18 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 
 	/**
+	 * @return void
+	 */
+	public function actionDependentMultiSelect2Disabled3()
+	{
+		$this['dependentMultiSelectForm2']['dependentMultiSelect']->setDependentCallback([$this, 'dependentCallback'])
+			->setDisabledWhenEmpty();
+
+		$this->setView('dependentMultiSelect2');
+	}
+
+
+	/**
 	 * @return Nette\Application\UI\Form
 	 */
 	protected function createComponentDependentMultiSelectForm1()
@@ -198,7 +222,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 	{
 		$form = new Nette\Application\UI\Form;
 
-		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second'])
+		$form->addSelect('select', 'Select', [1 => 'First', 2 => 'Second', 3 => 'Third'])
 			->setPrompt('---');
 
 		$form->addDependentMultiSelectBox('dependentMultiSelect', 'Dependent multi select', $form['select']);
@@ -209,7 +233,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 	/**
 	 * @param array
-	 * @return void
+	 * @return NasExt\Forms\DependentData
 	 */
 	public function dependentCallback(array $values)
 	{

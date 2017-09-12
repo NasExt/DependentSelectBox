@@ -9,14 +9,16 @@
  * the file license.md that was distributed with this source code.
  */
 
-namespace NasExt\Forms;
+namespace NasExt\Forms\DI;
 
 
 /**
  * @author Ales Wita
  * @license MIT
+ *
+ * @deprecated
  */
-class DependentCallbackException extends \Exception
+class DependentSelectBoxExtension extends \NasExt\Forms\DependentExtension
 {
 }
 
@@ -25,6 +27,6 @@ class DependentCallbackException extends \Exception
  * @author Ales Wita
  * @license MIT
  */
-class Test extends \Exception
+class Test
 {
 }

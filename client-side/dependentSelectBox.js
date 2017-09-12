@@ -86,8 +86,8 @@
 						}
 
 						if (Object.keys(data.items).length > 0) {
-
-							if (data.disabledWhenEmpty) {
+							// set disabled, when control haven not choices
+							if (data.disabledWhenEmpty === true) {
 								$select.prop('disabled', false);
 							}
 

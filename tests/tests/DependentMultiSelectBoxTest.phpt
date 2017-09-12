@@ -132,7 +132,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect1'], ['_do' => 'dependentMultiSelectForm1-submit'], ['select' => 1, 'dependentMultiSelect' => [3, 4]]);
 		$response = $presenter->run($request);
 
-		$presenter['dependentMultiSelectForm1']->getValues();// ??
+		$presenter['dependentMultiSelectForm1']->getValues();// must load values for throws exception
 	}
 
 
@@ -288,7 +288,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect2Disabled2'], ['_do' => 'dependentMultiSelectForm2-submit'], ['select' => 1, 'dependentMultiSelect' => 2]);
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect2Disabled2'], ['_do' => 'dependentMultiSelectForm2-submit'], ['select' => 1, 'dependentMultiSelect' => [2]]);
 		$response = $presenter->run($request);
 
 
@@ -298,6 +298,35 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 		//Tester\Assert::true($form->isSubmitted());
 		//Tester\Assert::true($form->isSuccess());
 		//Tester\Assert::same(['select' => 1, 'dependentMultiSelect' => []], (array) $form->getValues());
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testTen()
+	{
+		$configurator = new Nette\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+
+		$container = $configurator->createContainer();
+		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
+
+		$presenter = $presenterFactory->createPresenter('Base');
+		$presenter->autoCanonicalize = false;
+		$request = new Nette\Application\Request('Base', 'POST', ['action' => 'dependentMultiSelect2Disabled3'], ['_do' => 'dependentMultiSelectForm2-submit'], ['select' => 3]);
+		$response = $presenter->run($request);
+
+
+		// check form
+		$form = $presenter['dependentMultiSelectForm2'];
+		$form->getValues();// must load values for check if omitted
+
+		Tester\Assert::true($form->isSubmitted());
+		Tester\Assert::true($form->isSuccess());
+		Tester\Assert::true($form['dependentMultiSelect']->isOmitted());
+		Tester\Assert::same(['select' => 3], (array) $form->getValues());
 	}
 }
 
