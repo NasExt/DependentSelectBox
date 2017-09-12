@@ -80,15 +80,14 @@
 						var $select = $('#' + data.id);
 						$select.empty();
 
-						if (data.prompt != false) {
-							$('<option>')
-								.attr('value', '').text(data.prompt)
-								.appendTo($select);
+						// prompt set
+						if (data.prompt !== false && data.prompt !== undefined) {
+							$('<option>').attr('value', '').text(data.prompt).appendTo($select);
 						}
 
 						if (Object.keys(data.items).length > 0) {
-
-							if (data.disabledWhenEmpty) {
+							// set disabled, when control haven not choices
+							if (data.disabledWhenEmpty === true) {
 								$select.prop('disabled', false);
 							}
 

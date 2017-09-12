@@ -9,19 +9,18 @@
  * the file license.md that was distributed with this source code.
  */
 
-namespace NasExt\Forms\DI;
+namespace NasExt\Forms;
 
 use NasExt;
 use Nette;
 
 
 /**
- * Class DependentSelectBoxExtension
- * @package NasExt\Forms\DI
  * @author Ondra Votava <ondra.votava@pixidos.com>
  * @author Ales Wita
+ * @license MIT
  */
-class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
+class DependentExtension extends Nette\DI\CompilerExtension
 {
 	/**
 	 * @param Nette\PhpGenerator\ClassType
@@ -39,8 +38,11 @@ class DependentSelectBoxExtension extends Nette\DI\CompilerExtension
 	 */
 	public static function registerControls()
 	{
-		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, $parents, callable $dependentCallback, $multiple = false) {
-			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents, $dependentCallback, $multiple);
+		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
+			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents);
+		});
+		Nette\Forms\Container::extensionMethod('addDependentMultiSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
+			return $container[$name] = new NasExt\Forms\Controls\DependentMultiSelectBox($label, $parents);
 		});
 	}
 }
