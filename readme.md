@@ -12,4 +12,4 @@ $ composer require nasext/dependent-select-box
 
 
 ## Documentation
-Learn more in the [documentation](https://github.com/NasExt/DependentSelectBox/blob/master/en/index.md).
+Learn more in the [documentation](https://github.com/NasExt/DependentSelectBox/blob/master/doc/index.md).
