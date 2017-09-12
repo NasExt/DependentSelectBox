@@ -1,7 +1,7 @@
 {
 	"name": "nasext/dependent-select-box",
 	"type": "library",
-	"description": "DependentSelectBox for Nette Framework",
+	"description": "Dependent Select Box for Nette Framework.",
 	"keywords": ["nette", "nasext", "DependentSelectBox"],
 	"license": ["MIT"],
 	"authors": [
@@ -10,6 +10,10 @@
 		},
 		{
 			"name": "Jáchym Toušek"
+		},
+		{
+			"name": "Ales Wita",
+			"email": "aleswita+github@gmail.com"
 		}
 	],
 	"require": {
