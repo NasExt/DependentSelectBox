@@ -17,7 +17,7 @@ NasExt\Forms\DependentExtension::registerControls();
 Or enable the extension using your neon config:
 ```neon
 extensions:
-	dependentSelectBox: NasExt\Forms\Extension
+	dependentSelectBox: NasExt\Forms\DependentExtension
 ```
 
 
