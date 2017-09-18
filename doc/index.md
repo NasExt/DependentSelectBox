@@ -37,9 +37,9 @@ $('[data-dependentselectbox]').dependentSelectBox(callback);
 ## Usage
 How to use DependentSelectBox in form:
 ```php
-$form->addDependentSelectBox('name', 'Label', ...dependent controls)
+$form->addDependentSelectBox('name', 'Label', $dependentControl1, $dependentControl2, ...)
 	->setDependentCallback(function ($values) {
-		return new \NasExt\Forms\DependentData(items, values, prompt);
+		return new \NasExt\Forms\DependentData(items, value, prompt);
 	})
 ```
 
@@ -99,18 +99,18 @@ $form->addDependentSelectBox('city', 'City', $form['country'])
 		$data = new \NasExt\Forms\DependentData;
 
 		if ($values['country'] === 1) {
-			return $data->setItems($citySlovakia)->setPrompt('---');
+			$data->setItems($citySlovakia)->setPrompt('---');
 
 		} elseif ($values['country'] === 2) {
-			return $data->setItems($cityCzechia)->setPrompt('---');
+			$data->setItems($cityCzechia)->setPrompt('---');
 
 		} elseif ($values['country'] === 3) {
-			return $data->setItems($cityUsa)->setPrompt('---');
+			$data->setItems($cityUsa)->setPrompt('---');
+		}
 
-		} else {
-			return $data;
-		})
-	})->setPrompt('--- Select country first ---');
+		return $data;
+	})
+	->setPrompt('--- Select country first ---');
 
 $form->addDependentSelectBox('street', 'Street', $form['city'], $form['text'])
 	->setDependentCallback(function ($values) use ($street1, $street2, $street3) {
@@ -121,26 +121,26 @@ $form->addDependentSelectBox('street', 'Street', $form['city'], $form['text'])
 				$street1 = array_merge($street1, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
-			return $data->setItems($street1);
+			$data->setItems($street1);
 
 		} elseif ($values['city'] === 2) {
 			if (!empty($values['text'])) {
 				$street2 = array_merge($street2, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
-			return $data->setItems($street2);
+			$data->setItems($street2);
 
 		} elseif ($values['city'] === 3) {
 			if (!empty($values['text'])) {
 				$street3 = array_merge($street3, [10 => 'Value from Text input: ' . $values['text']]);
 			}
 
-			return $data->setItems($street3);
+			$data->setItems($street3);
 
-		} else {
-			return $data;
-		}
-	})->setPrompt('--- Select ---');
+
+		return $data;
+	})
+	->setPrompt('--- Select ---');
 ```
 
 
@@ -149,18 +149,18 @@ You can set select box as disabled with setDisabledWhenEmpty(true) when is empty
 $form->addDependentSelectBox('city', 'City', $form['country'])
 	->setDependentCallback(function ($values) use ($citySlovakia, $cityCzechia, $cityUsa) {
 		$data = new \NasExt\Forms\Controls\DependentSelectBoxData;
+
 		if ($values['country'] === 1) {
-			return $data->setItems($citySlovakia);
+			$data->setItems($citySlovakia);
 
 		} elseif ($values['country'] === 2) {
-			return $data->setItems($cityCzechia);
+			$data->setItems($cityCzechia);
 
 		} elseif ($values['country'] === 3) {
-			return $data->setItems($cityUsa);
-
-		} else {
-			return $data;
+			$data->setItems($cityUsa);
 		}
+
+		return $data;
 	})
 	->setDisabledWhenEmpty(true)
 	->setPrompt('--- Select ---');
