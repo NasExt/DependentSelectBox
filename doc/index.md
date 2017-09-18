@@ -10,7 +10,7 @@ $ composer require nasext/dependent-select-box
 
 Initialization in your `bootstrap.php`:
 ```php
-NasExt\Forms\Extension::registerControls();
+NasExt\Forms\DependentExtension::registerControls();
 ```
 
 
