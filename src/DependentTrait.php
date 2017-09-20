@@ -65,7 +65,7 @@ trait DependentTrait
 	{
 		$this->tryLoadItems();
 
-		if ($this->tempValue !== '') {
+		if (!in_array($this->tempValue, [null, '', []], true)) {
 			return $this->tempValue;
 		}
 
@@ -93,7 +93,7 @@ trait DependentTrait
 	{
 		parent::setItems($items, $useKeys);
 
-		if ($this->tempValue !== '') {// '' it's prompt value
+		if (!in_array($this->tempValue, [null, '', []], true)) {
 			parent::setValue($this->tempValue);
 		}
 
