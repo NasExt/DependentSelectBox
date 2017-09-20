@@ -47,7 +47,7 @@ trait DependentTrait
 
 		$parents = [];
 		foreach ($this->parents as $parent) {
-			$parents[$parent->getName()] = $parent->getHtmlId();
+			$parents[$this->getNormalizeName($parent)] = $parent->getHtmlId();
 		}
 
 		$attrs['data-dependentselectbox-parents'] = Nette\Utils\Json::encode($parents);
@@ -141,5 +141,13 @@ trait DependentTrait
 	{
 		$this->disabledWhenEmpty = $value;
 		return $this;
+	}
+
+	/**
+	 * @param Nette\Forms\Controls\BaseControl $parent
+	 * @return string
+	 */
+	protected function getNormalizeName(Nette\Forms\Controls\BaseControl $parent) {
+		return str_replace('-', '_', $parent->getHtmlId());
 	}
 }
