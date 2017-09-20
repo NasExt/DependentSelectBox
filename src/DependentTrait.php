@@ -64,6 +64,11 @@ trait DependentTrait
 	public function getValue()
 	{
 		$this->tryLoadItems();
+
+		if ($this->tempValue !== null) {
+			return $this->tempValue;
+		}
+
 		return parent::getValue();
 	}
 

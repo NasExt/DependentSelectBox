@@ -55,6 +55,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 				$parent->setValue($value);
 
 				$parentsNames[$parent->getName()] = $parent->getValue();
+				//$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
 			}
 
 			$data = $this->getDependentData([$parentsNames]);

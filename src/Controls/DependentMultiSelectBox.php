@@ -69,6 +69,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 				$parent->setValue($value);
 
 				$parentsNames[$parent->getName()] = $parent->getValue();
+				//$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
 			}
 
 			$data = $this->getDependentData([$parentsNames]);
