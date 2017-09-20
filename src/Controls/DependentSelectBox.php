@@ -51,7 +51,10 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
 			$parentsNames = [];
 			foreach ($this->parents as $parent) {
-				$parentsNames[$parent->getName()] = $presenter->getParameter($parent->getName());
+				$value = $presenter->getParameter($parent->getName());
+				$parent->setValue($value);
+
+				$parentsNames[$parent->getName()] = $parent->getValue();
 			}
 
 			$data = $this->getDependentData([$parentsNames]);
