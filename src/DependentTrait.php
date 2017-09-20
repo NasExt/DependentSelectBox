@@ -65,7 +65,7 @@ trait DependentTrait
 	{
 		$this->tryLoadItems();
 
-		if ($this->tempValue !== null) {
+		if ($this->tempValue !== '') {
 			return $this->tempValue;
 		}
 
