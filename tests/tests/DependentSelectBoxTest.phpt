@@ -178,7 +178,7 @@ final class DependentSelectBoxTest extends Tester\TestCase
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1', '_do' => 'dependentSelectForm1-dependentSelect-load', 'select' => 1]);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentSelect1', 'do' => 'dependentSelectForm1-dependentSelect-load', 'frm_dependentSelect_select' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\JsonResponse);
