@@ -33,23 +33,35 @@
 			var signalLink = element.data(dsb.settings.dataLinkName);
 			var parents = element.data(dsb.settings.dataParentsName);
 
-			if (signalLink == undefined) {
+			if (signalLink === undefined) {
 				return false;
 			}
 
 			$.each(parents, function (name, id) {
 				var parentElement = $('#' + id);
+
 				if (parentElement.length > 0) {
 					var val;
+
 					if (parentElement.prop('type') === 'checkbox') {
 						val = parentElement.prop('checked') ? 1 : 0;
+
 					} else {
 						val = $(parentElement).val();
 						if (!val) {
 							return;
 						}
 					}
-					signalLink = signalLink + '&' + name + '=' + val;
+
+
+					if (val instanceof Array) {
+						$.each(val, function (key, value) {
+							signalLink += '&' + name + '[]=' + value;
+						});
+
+					} else {
+						signalLink += '&' + name + '=' + val;
+					}
 				}
 			});
 

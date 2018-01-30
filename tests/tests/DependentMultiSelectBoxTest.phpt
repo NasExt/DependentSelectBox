@@ -33,7 +33,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -92,7 +92,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -122,7 +122,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -143,7 +143,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -172,14 +172,14 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
 
 		$presenter = $presenterFactory->createPresenter('Base');
 		$presenter->autoCanonicalize = false;
-		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect1', 'do' => 'dependentMultiSelectForm1-dependentMultiSelect-load', 'frm_dependentMultiSelectForm1_select' => 1]);
+		$request = new Nette\Application\Request('Base', 'GET', ['action' => 'dependentMultiSelect1', 'do' => 'dependentMultiSelectForm1-dependentMultiSelect-load', 'select' => 1]);
 		$response = $presenter->run($request);
 
 		Tester\Assert::true($response instanceof Nette\Application\Responses\JsonResponse);
@@ -204,7 +204,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -229,7 +229,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -253,7 +253,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -281,7 +281,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -308,7 +308,7 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 	{
 		$configurator = new Nette\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$configurator->addConfig(__DIR__ . '/../app/config/config.neon');
+		$configurator->addConfig($this->getConfig());
 
 		$container = $configurator->createContainer();
 		$presenterFactory = $container->getByType('Nette\\Application\\IPresenterFactory');
@@ -327,6 +327,27 @@ final class DependentMultiSelectBoxTest extends Tester\TestCase
 		Tester\Assert::true($form->isSuccess());
 		Tester\Assert::true($form['dependentMultiSelect']->isOmitted());
 		Tester\Assert::same(['select' => 3], (array) $form->getValues());
+	}
+
+
+	/**
+	 * @internal
+	 */
+	private function getConfig()
+	{
+		return Tester\FileMock::create('
+extensions:
+	dependentSelectBox: NasExt\Forms\DependentExtension
+
+application:
+	mapping:
+		*: NasExt\Forms\Tests\App\Presenters\*Presenter
+
+services:
+	base.presenter:
+		class: NasExt\Forms\Tests\App\Presenters\BasePresenter
+
+	routing.router: NasExt\Forms\Tests\App\Router\Router::createRouter', 'neon');
 	}
 }
 

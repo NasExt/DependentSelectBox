@@ -74,7 +74,7 @@ trait DependentTrait
 
 
 	/**
-	 * @param string|int
+	 * @param string|int $value
 	 * @return self
 	 */
 	public function setValue($value)
@@ -85,8 +85,8 @@ trait DependentTrait
 
 
 	/**
-	 * @param array
-	 * @param bool
+	 * @param array $items
+	 * @param bool $useKeys
 	 * @return self
 	 */
 	public function setItems(array $items, $useKeys = true)
@@ -102,9 +102,9 @@ trait DependentTrait
 
 
 	/**
-	 * @throws NasExt\Forms\DependentCallbackException
-	 * @param array
+	 * @param array $args
 	 * @return NasExt\Forms\DependentData
+	 * @throws NasExt\Forms\DependentCallbackException
 	 */
 	private function getDependentData(array $args = [])
 	{
@@ -123,7 +123,7 @@ trait DependentTrait
 
 
 	/**
-	 * @param callable
+	 * @param callable $callback
 	 * @return self
 	 */
 	public function setDependentCallback(callable $callback)
@@ -134,7 +134,7 @@ trait DependentTrait
 
 
 	/**
-	 * @param bool
+	 * @param bool $value
 	 * @return self
 	 */
 	public function setDisabledWhenEmpty($value = true)
@@ -143,13 +143,11 @@ trait DependentTrait
 		return $this;
 	}
 
-
 	/**
-	 * @param Nette\Forms\Controls\BaseControl
+	 * @param Nette\Forms\Controls\BaseControl $parent
 	 * @return string
 	 */
-	protected function getNormalizeName(Nette\Forms\Controls\BaseControl $parent)
-	{
+	private function getNormalizeName(Nette\Forms\Controls\BaseControl $parent) {
 		return str_replace('-', '_', $parent->getHtmlId());
 	}
 }

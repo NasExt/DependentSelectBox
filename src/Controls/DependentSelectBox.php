@@ -30,8 +30,8 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @param string
-	 * @param array[Nette\Forms\IControl]
+	 * @param string $label
+	 * @param array<int, Nette\Forms\IControl> $parents
 	 */
 	public function __construct($label, array $parents)
 	{
@@ -41,7 +41,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 
 
 	/**
-	 * @param string
+	 * @param string $signal
 	 * @return void
 	 */
 	public function signalReceived($signal)
