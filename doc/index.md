@@ -2,7 +2,7 @@
 DependentSelectBox for [Nette Framework](https://nette.org). This dependent select box support dependence for more form controls , not only for select boxes but also dependence for text input, textarea and more.
 
 ## Installation
-The best way to install AlesWita/DropzoneUploader is using [Composer](http://getcomposer.org/):
+The best way to install NasExt/DependentSelectBox is using [Composer](http://getcomposer.org/):
 ```sh
 $ composer require nasext/dependent-select-box
 ```
@@ -164,4 +164,4 @@ $form->addDependentSelectBox('city', 'City', $form['country'])
 	})
 	->setDisabledWhenEmpty(true)
 	->setPrompt('--- Select ---');
-	```
+```
