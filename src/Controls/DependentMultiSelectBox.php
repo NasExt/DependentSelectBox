@@ -30,8 +30,8 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 
 	/**
-	 * @param string
-	 * @param array[Nette\Forms\IControl]
+	 * @param string $label
+	 * @param array<int, Nette\Forms\IControl> $parents
 	 */
 	public function __construct($label, array $parents)
 	{
@@ -41,7 +41,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 
 	/**
-	 * @throws
+	 * @throws $value
 	 * @param bool
 	 * @return self
 	 */
@@ -50,12 +50,13 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 		if (is_array($value)) {
 			throw new Nette\InvalidArgumentException('NasExt\\Forms\\Controls\\DependentMultiSelectBox not supported disabled items!');
 		}
+
 		return parent::setDisabled($value);
 	}
 
 
 	/**
-	 * @param string
+	 * @param string $signal
 	 * @return void
 	 */
 	public function signalReceived($signal)
@@ -64,7 +65,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
 			$parentsNames = [];
-			foreach ($this->parents as $parent) {
+			foreach ($this->parents as $parent) {bdump($presenter->getParameters());
 				$value = $presenter->getParameter($this->getNormalizeName($parent));
 				$parent->setValue($value);
 
@@ -79,6 +80,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 				'prompt' => false,
 				'disabledWhenEmpty' => $this->disabledWhenEmpty,
 			];
+
 			$presenter->sendPayload();
 		}
 	}
@@ -97,7 +99,6 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 			$data = $this->getDependentData([$parentsValues]);
 			$items = $data->getItems();
-
 
 			if ($this->getForm()->isSubmitted()) {
 				$this->setValue($this->value);

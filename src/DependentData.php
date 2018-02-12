@@ -15,12 +15,18 @@ use Nette;
 
 
 /**
+ * @property array $items
+ * @property string|int $value
+ * @property string $prompt
+ *
  * @author Dusan Hudak
  * @author Ales Wita
  * @license MIT
  */
 class DependentData
 {
+	use Nette\SmartObject;
+
 	/** @var array */
 	private $items = [];
 
@@ -32,48 +38,15 @@ class DependentData
 
 
 	/**
-	 * @param array
-	 * @param string|int
-	 * @param string
+	 * @param array $items
+	 * @param string|int $value
+	 * @param string $prompt
 	 */
 	public function __construct(array $items = [], $value = null, $prompt = null)
 	{
 		$this->items = $items;
 		$this->value = $value;
 		$this->prompt = $prompt;
-	}
-
-
-	/**
-	 * @param array
-	 * @return self
-	 */
-	public function setItems(array $items)
-	{
-		$this->items = $items;
-		return $this;
-	}
-
-
-	/**
-	 * @param string|int
-	 * @return self
-	 */
-	public function setValue($value)
-	{
-		$this->value = $value;
-		return $this;
-	}
-
-
-	/**
-	 * @param string|int
-	 * @return self
-	 */
-	public function setPrompt($value)
-	{
-		$this->prompt = $value;
-		return $this;
 	}
 
 
@@ -87,7 +60,58 @@ class DependentData
 
 
 	/**
-	 * @param array
+	 * @param array $items
+	 * @return self
+	 */
+	public function setItems(array $items)
+	{
+		$this->items = $items;
+		return $this;
+	}
+
+
+	/**
+	 * @return string|int
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
+
+
+	/**
+	 * @param string|int $value
+	 * @return self
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getPrompt()
+	{
+		return $this->prompt;
+	}
+
+
+	/**
+	 * @param string $value
+	 * @return self
+	 */
+	public function setPrompt($value)
+	{
+		$this->prompt = $value;
+		return $this;
+	}
+
+
+	/**
+	 * @param array $disabledItems
 	 * @return array
 	 */
 	public function getPreparedItems($disabledItems = null)
@@ -96,6 +120,7 @@ class DependentData
 		foreach ($this->items as $key => $item) {
 			if (!($item instanceof Nette\Utils\Html)) {
 				$el = Nette\Utils\Html::el('option')->value($key)->setText($item);
+
 			} else {
 				$el = $item;
 			}
@@ -118,23 +143,5 @@ class DependentData
 		}
 
 		return $items;
-	}
-
-
-	/**
-	 * @return string|int
-	 */
-	public function getValue()
-	{
-		return $this->value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getPrompt()
-	{
-		return $this->prompt;
 	}
 }

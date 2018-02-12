@@ -232,7 +232,7 @@ final class BasePresenter extends Nette\Application\UI\Presenter
 
 
 	/**
-	 * @param array
+	 * @param array $values
 	 * @return NasExt\Forms\DependentData
 	 */
 	public function dependentCallback(array $values)

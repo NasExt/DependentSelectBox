@@ -23,7 +23,7 @@ use Nette;
 class DependentExtension extends Nette\DI\CompilerExtension
 {
 	/**
-	 * @param Nette\PhpGenerator\ClassType
+	 * @param Nette\PhpGenerator\ClassType $class
 	 * @return void
 	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
@@ -41,6 +41,7 @@ class DependentExtension extends Nette\DI\CompilerExtension
 		Nette\Forms\Container::extensionMethod('addDependentSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
 			return $container[$name] = new NasExt\Forms\Controls\DependentSelectBox($label, $parents);
 		});
+
 		Nette\Forms\Container::extensionMethod('addDependentMultiSelectBox', function (Nette\Forms\Container $container, $name, $label, Nette\Forms\IControl ...$parents) {
 			return $container[$name] = new NasExt\Forms\Controls\DependentMultiSelectBox($label, $parents);
 		});
