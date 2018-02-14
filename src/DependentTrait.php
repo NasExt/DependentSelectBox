@@ -148,7 +148,8 @@ trait DependentTrait
 	 * @param Nette\Forms\Controls\BaseControl $parent
 	 * @return string
 	 */
-	private function getNormalizeName(Nette\Forms\Controls\BaseControl $parent) {
+	private function getNormalizeName(Nette\Forms\Controls\BaseControl $parent)
+	{
 		return str_replace('-', '_', $parent->getHtmlId());
 	}
 }
