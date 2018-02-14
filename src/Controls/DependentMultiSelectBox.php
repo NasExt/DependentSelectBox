@@ -65,7 +65,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
 			$parentsNames = [];
-			foreach ($this->parents as $parent) {bdump($presenter->getParameters());
+			foreach ($this->parents as $parent) {
 				$value = $presenter->getParameter($this->getNormalizeName($parent));
 				$parent->setValue($value);
 
