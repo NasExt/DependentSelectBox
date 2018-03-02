@@ -118,30 +118,66 @@ class DependentData
 	{
 		$items = [];
 		foreach ($this->items as $key => $item) {
-			if (!($item instanceof Nette\Utils\Html)) {
-				$el = Nette\Utils\Html::el('option')->value($key)->setText($item);
+			$elements = [];
+			if (is_array($item)) {
+				$groupItems = [];
+				foreach ($item as $innerKey => $innerItem) {
+					$el = $this->getPreparedElement($innerKey, $innerItem, $disabledItems);
+					$this->addElementToItemsList($groupItems, $el);
 
-			} else {
-				$el = $item;
+				}
+				$items[$key] = [
+					'key' => $key,
+					'value' => $groupItems,
+				];
 			}
-
-			// disable element
-			if (is_array($disabledItems) && array_key_exists($key, $disabledItems) && $disabledItems[$key] === true) {
-				$el->disabled(true);
-			}
-
-			$items[$key] = [
-				'key' => $el->getValue(),
-				'value' => $el->getText(),
-			];
-
-			end($items);
-			$lKey = key($items);
-			foreach ($el->attrs as $attr => $val) {
-				$items[$lKey]['attributes'][$attr] = $val;
+			else {
+				$el = $this->getPreparedElement($key, $item, $disabledItems);
+				$this->addElementToItemsList($items, $el);
 			}
 		}
-
 		return $items;
+	}
+
+
+	/**
+	 * @param string $key
+	 * @param mixed $item
+	 * @param array|null $disabledItems
+	 * @return Nette\Utils\Html
+	 */
+	private function getPreparedElement($key, $item, $disabledItems = null)
+	{
+		if (!($item instanceof Nette\Utils\Html)) {
+			$el = Nette\Utils\Html::el('option')->value($key)->setText($item);
+
+		} else {
+			$el = $item;
+		}
+
+		// disable element
+		if (is_array($disabledItems) && array_key_exists($key, $disabledItems) && $disabledItems[$key] === true) {
+			$el->disabled(true);
+		}
+
+		return $el;
+	}
+
+
+	/**
+	 * @param array &$items
+	 * @param Nette\Utils\Html $el
+	 */
+	private function addElementToItemsList(&$items, $el)
+	{
+		$items[$el->getAttribute('value')] = [
+			'key' => $el->getValue(),
+			'value' => $el->getText(),
+		];
+		end($items);
+		$lKey = key($items);
+		foreach ($el->attrs as $attr => $val) {
+			$items[$lKey]['attributes'][$attr] = $val;
+		}
 	}
 }

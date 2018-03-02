@@ -111,7 +111,7 @@
 
 									$.each(item.value, function (objI, objItem) {
 										var option = $('<option>')
-											.attr('value', objI).text(objItem);
+											.attr('value', objI).text(objItem.value);
 										if (data.value !== null && objI == data.value) {
 											option.attr('selected', true);
 										}
