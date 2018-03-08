@@ -124,8 +124,8 @@ class DependentData
 				foreach ($item as $innerKey => $innerItem) {
 					$el = $this->getPreparedElement($innerKey, $innerItem, $disabledItems);
 					$this->addElementToItemsList($groupItems, $el);
-
 				}
+
 				$items[$key] = [
 					'key' => $key,
 					'value' => $groupItems,
