@@ -130,8 +130,8 @@ class DependentData
 					'key' => $key,
 					'value' => $groupItems,
 				];
-			}
-			else {
+
+			} else {
 				$el = $this->getPreparedElement($key, $item, $disabledItems);
 				$this->addElementToItemsList($items, $el);
 			}
