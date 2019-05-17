@@ -59,7 +59,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 	 * @param string $signal
 	 * @return void
 	 */
-	public function signalReceived($signal)
+	public function signalReceived(string $signal) : void
 	{
 		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
 
