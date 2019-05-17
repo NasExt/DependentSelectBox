@@ -37,7 +37,7 @@ trait DependentTrait
 	/**
 	 * @return Nette\Utils\Html
 	 */
-	public function getControl()
+	public function getControl() : Nette\Utils\Html
 	{
 		$this->tryLoadItems();
 
@@ -112,7 +112,7 @@ trait DependentTrait
 			throw new NasExt\Forms\DependentCallbackException('Dependent callback for "' . $this->getHtmlId() . '" must be set!');
 		}
 
-		$dependentData = Nette\Utils\Callback::invokeArgs($this->dependentCallback, $args);
+		$dependentData = call_user_func_array($this->dependentCallback, $args);
 
 		if (!($dependentData instanceof NasExt\Forms\DependentData) && !($dependentData instanceof NasExt\Forms\Controls\DependentSelectBoxData)) {
 			throw new NasExt\Forms\DependentCallbackException('Callback for "' . $this->getHtmlId() . '" must return NasExt\\Forms\\DependentData instance!');
