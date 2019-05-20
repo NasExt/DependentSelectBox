@@ -23,7 +23,9 @@ use Nette;
  */
 class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implements Nette\Application\UI\ISignalReceiver
 {
-	use NasExt\Forms\DependentTrait;
+	use NasExt\Forms\DependentTrait {
+	    getValue as protected traitGetValue;
+    }
 
 	/** @var string */
 	const SIGNAL_NAME = DependentSelectBox::SIGNAL_NAME;
@@ -56,6 +58,15 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 
 	/**
+	 * @return array
+     	 */
+	public function getValue(): array
+	{
+		return $this->traitGetValue();
+	}
+
+
+    	/**
 	 * @param string $signal
 	 * @return void
 	 */
@@ -66,7 +77,9 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
 			$parentsNames = [];
 			foreach ($this->parents as $parent) {
-				$value = $presenter->getParameter($this->getNormalizeName($parent));
+				$value = explode(',', $presenter->getParameter($this->getNormalizeName($parent)));
+				$value = array_filter($value, static function ($val) {return !in_array($val, [null, '', []], true);});
+
 				$parent->setValue($value);
 
 				$parentsNames[$parent->getName()] = $parent->getValue();
