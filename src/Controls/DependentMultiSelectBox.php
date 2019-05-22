@@ -23,7 +23,9 @@ use Nette;
  */
 class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implements Nette\Application\UI\ISignalReceiver
 {
-	use NasExt\Forms\DependentTrait;
+	use NasExt\Forms\DependentTrait {
+	    getValue as protected traitGetValue;
+    }
 
 	/** @var string */
 	const SIGNAL_NAME = DependentSelectBox::SIGNAL_NAME;
@@ -56,10 +58,19 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 
 	/**
+	 * @return array
+     	 */
+	public function getValue(): array
+	{
+		return $this->traitGetValue();
+	}
+
+
+    	/**
 	 * @param string $signal
 	 * @return void
 	 */
-	public function signalReceived($signal)
+	public function signalReceived(string $signal) : void
 	{
 		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
 
@@ -67,6 +78,12 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 			$parentsNames = [];
 			foreach ($this->parents as $parent) {
 				$value = $presenter->getParameter($this->getNormalizeName($parent));
+				
+				if ($parent instanceof Nette\Forms\Controls\MultiChoiceControl) {
+					$value = explode(',', $value);
+				    	$value = array_filter($value, static function ($val) {return !in_array($val, [null, '', []], true);});
+				}
+
 				$parent->setValue($value);
 
 				$parentsNames[$parent->getName()] = $parent->getValue();
