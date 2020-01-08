@@ -89,7 +89,7 @@ trait DependentTrait
 	 * @param bool $useKeys
 	 * @return self
 	 */
-	public function setItems(array $items, $useKeys = true)
+	public function setItems(array $items, bool $useKeys = true)
 	{
 		parent::setItems($items, $useKeys);
 
