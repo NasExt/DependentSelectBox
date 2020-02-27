@@ -102,16 +102,15 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 			}
 
 
-			if (count($items) > 0) {
-				$this->loadHttpData();
+			$this->loadHttpData();
+			$this->setItems($items)
+				->setPrompt($data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt());
 
-				$this->setItems($items)
-					->setPrompt($data->getPrompt() === null ? $this->getPrompt() : $data->getPrompt());
-			} else {
+			if (count($items) === 0) {
 				if ($this->disabledWhenEmpty === true && !$this->isDisabled()) {
 					$this->setDisabled();
 				}
-			}
+			}			
 		}
 	}
 }
