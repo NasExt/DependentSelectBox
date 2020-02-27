@@ -144,7 +144,7 @@ $form->addDependentSelectBox('street', 'Street', $form['city'], $form['text'])
 ```
 
 
-You can set select box as disabled with setDisabledWhenEmpty(true) when is empty, but don't remember, disabled select box does not support validation
+You can set the select box as disabled with `setDisabledWhenEmpty(true)` when empty, but remember, a disabled select box does not support validation.
 ```php
 $form->addDependentSelectBox('city', 'City', $form['country'])
 	->setDependentCallback(function ($values) use ($citySlovakia, $cityCzechia, $cityUsa) {
