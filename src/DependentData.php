@@ -136,7 +136,8 @@ class DependentData
 				$this->addElementToItemsList($items, $el);
 			}
 		}
-		return $items;
+		// make a List so the order of items is preserved when sent as JSON to client
+		return array_values($items);
 	}
 
 
