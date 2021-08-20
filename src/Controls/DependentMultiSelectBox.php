@@ -80,8 +80,12 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 				$value = $presenter->getParameter($this->getNormalizeName($parent));
 				
 				if ($parent instanceof Nette\Forms\Controls\MultiChoiceControl) {
-					$value = explode(',', $value);
-				    	$value = array_filter($value, static function ($val) {return !in_array($val, [null, '', []], true);});
+					if (is_string($value)) {
+						$value = explode(',', $value);
+					}
+					if ($value !== null) {
+						$value = array_filter($value, static function ($val) {return !in_array($val, [null, '', []], true);});
+					}
 				}
 
 				$parent->setValue($value);
