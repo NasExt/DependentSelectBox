@@ -54,7 +54,7 @@ class DependentSelectBox extends Nette\Forms\Controls\SelectBox implements Nette
 				$value = $presenter->getParameter($this->getNormalizeName($parent));
 				
 				if ($parent instanceof Nette\Forms\Controls\MultiChoiceControl) {
-					if (is_string($value) {
+					if (is_string($value)) {
 						$value = explode(',', $value);
 					}
 
