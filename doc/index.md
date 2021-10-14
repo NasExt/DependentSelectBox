@@ -141,6 +141,26 @@ $form->addDependentSelectBox('street', 'Street', $form['city'], $form['text'])
 		return $data;
 	})
 	->setPrompt('--- Select ---');
+
+// alternative with callback params
+/* set callback params if the control should not be reloaded after change of any parents/params .. e.g. if control is dependant on another control3,
+	which is dependant on control2 and that is dependant on control1, we should set parent(control3) and params(control1, control2, control3) in this order.
+	Note, control3 has to be set within `params` as well (the order is important)
+	If, however, control should reload after change of any depending control, we set all those controls as parents(control1, control2, control3) in this order
+ order of params matters! as the control values are being set in that order, thus the allowed items for that particular control are being loaded based
+ on passed params.. otherwise we would have to call `->checkDefaultValue(false)` on those dependent controls
+*/
+$form->addDependentSelectBox('street', 'Street', $form['city'])
+	->setDependentCallbackParams([$form['city'], $form['text']])
+	->setDependentCallback(function ($values) use ($street1, $street2, $street3) {
+		$data = new \NasExt\Forms\DependentData;
+		if ($values['city'] === 1 && !empty($values['text'])) {
+			$data->setItems($street1);
+		}
+		return $data;
+	})
+	->setPrompt('--- Select ---');
+
 ```
 
 

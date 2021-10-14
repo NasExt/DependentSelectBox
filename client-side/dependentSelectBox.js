@@ -20,7 +20,8 @@
 		dsb.settings = $.extend({
 			suggestTimeout: 350,
 			dataLinkName: 'dependentselectbox',
-			dataParentsName: 'dependentselectboxParents'
+			dataParentsName: 'dependentselectboxParents',
+			dataParamsName: 'dependentselectboxParams'
 		}, options);
 
 
@@ -31,23 +32,23 @@
 		 */
 		this.getSignalLink = function (element) {
 			var signalLink = element.data(dsb.settings.dataLinkName);
-			var parents = element.data(dsb.settings.dataParentsName);
+			var params = element.data(dsb.settings.dataParamsName);
 
 			if (signalLink === undefined) {
 				return false;
 			}
 
-			$.each(parents, function (name, id) {
-				var parentElement = $('#' + id);
+			$.each(params, function (name, id) {
+				var paramElement = $('#' + id);
 
-				if (parentElement.length > 0) {
+				if (paramElement.length > 0) {
 					var val;
 
-					if (parentElement.prop('type') === 'checkbox') {
-						val = parentElement.prop('checked') ? 1 : 0;
+					if (paramElement.prop('type') === 'checkbox') {
+						val = paramElement.prop('checked') ? 1 : 0;
 
 					} else {
-						val = $(parentElement).val();
+						val = $(paramElement).val();
 						if (!val) {
 							return;
 						}
@@ -205,5 +206,5 @@
 				}
 			});
 		});
-	}
+	};
 })(jQuery);

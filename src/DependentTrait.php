@@ -24,6 +24,13 @@ trait DependentTrait
 	/** @var array */
 	private $parents;
 
+	/**
+	 * @var array
+	 * Defaults to $this->parents
+	 * Useful when selectbox should receive more params that those it's being changed by
+	 */
+	private $dependentCallbackParams;
+
 	/** @var callable */
 	private $dependentCallback;
 
@@ -50,7 +57,13 @@ trait DependentTrait
 			$parents[$this->getNormalizeName($parent)] = $parent->getHtmlId();
 		}
 
+		$params = [];
+		foreach ($this->dependentCallbackParams as $param) {
+			$params[$this->getNormalizeName($param)] = $param->getHtmlId();
+		}
+
 		$attrs['data-dependentselectbox-parents'] = Nette\Utils\Json::encode($parents);
+		$attrs['data-dependentselectbox-params'] = Nette\Utils\Json::encode($params);
 		$attrs['data-dependentselectbox'] = $form->getPresenter()->link($this->lookupPath('Nette\\Application\\UI\\Presenter') . Nette\ComponentModel\IComponent::NAME_SEPARATOR . self::SIGNAL_NAME . '!');
 
 		$control->addAttributes($attrs);
@@ -92,7 +105,7 @@ trait DependentTrait
 	public function setItems(array $items, bool $useKeys = true)
 	{
 		parent::setItems($items, $useKeys);
-
+		
 		if (!in_array($this->tempValue, [null, '', []], true)) {
 			parent::setValue($this->tempValue);
 		}
@@ -129,6 +142,17 @@ trait DependentTrait
 	public function setDependentCallback(callable $callback)
 	{
 		$this->dependentCallback = $callback;
+		return $this;
+	}
+
+
+	/**
+	 * @param array $params
+	 * @return self
+	 */
+	public function setDependentCallbackParams(array $params)
+	{
+		$this->dependentCallbackParams = $params;
 		return $this;
 	}
 
