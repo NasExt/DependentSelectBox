@@ -82,7 +82,13 @@
 			if (signalLink == false) {
 				return false;
 			}
-
+			// skip cascaded data loading if parentEl is not yet set, empty dependentSelect & add empty prompt
+			var parentElVal = parentElement.val();
+			if (!parentElVal) {
+				dependentSelect.empty().append('<option value="" />').change();
+				dependentSelect.selectpicker && dependentSelect.selectpicker('refresh');
+				return false;
+			}
 			// Send ajax request
 			$.ajax(signalLink, {
 				async: false,
