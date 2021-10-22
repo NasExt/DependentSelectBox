@@ -38,6 +38,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 	public function __construct($label, array $parents)
 	{
 		$this->parents = $parents;
+		$this->dependentCallbackParams = $this->parents;//default
 		parent::__construct($label);
 	}
 
@@ -75,11 +76,11 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 		$presenter = $this->lookup('Nette\\Application\\UI\\Presenter');
 
 		if ($presenter->isAjax() && $signal === self::SIGNAL_NAME && !$this->isDisabled()) {
-			$parentsNames = [];
-			foreach ($this->parents as $parent) {
-				$value = $presenter->getParameter($this->getNormalizeName($parent));
-				
-				if ($parent instanceof Nette\Forms\Controls\MultiChoiceControl) {
+			$cbParamNames = [];
+			foreach ($this->dependentCallbackParams as $param) {
+				$value = $presenter->getParameter($this->getNormalizeName($param));
+
+				if ($param instanceof Nette\Forms\Controls\MultiChoiceControl) {
 					if (is_string($value)) {
 						$value = explode(',', $value);
 					}
@@ -88,12 +89,12 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 					}
 				}
 
-				$parent->setValue($value);
+				$param->setValue($value);
 
-				$parentsNames[$parent->getName()] = $parent->getValue();
+				$cbParamNames[$param->getName()] = $param->getValue();
 			}
 
-			$data = $this->getDependentData([$parentsNames]);
+			$data = $this->getDependentData([$cbParamNames]);
 			$presenter->payload->dependentselectbox = [
 				'id' => $this->getHtmlId(),
 				'items' => $data->getPreparedItems(!is_array($this->disabled) ?: $this->disabled),
@@ -112,13 +113,13 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 	 */
 	private function tryLoadItems()
 	{
-		if ($this->parents === array_filter($this->parents, function ($p) {return !$p->hasErrors();})) {
-			$parentsValues = [];
-			foreach ($this->parents as $parent) {
-				$parentsValues[$parent->getName()] = $parent->getValue();
+		if ($this->dependentCallbackParams === array_filter($this->dependentCallbackParams, function ($p) {return !$p->hasErrors();})) {
+			$cbParamValues = [];
+			foreach ($this->dependentCallbackParams as $param) {
+				$cbParamValues[$param->getName()] = $param->getValue();
 			}
 
-			$data = $this->getDependentData([$parentsValues]);
+			$data = $this->getDependentData([$cbParamValues]);
 			$items = $data->getItems();
 
 			if ($this->getForm()->isSubmitted()) {
