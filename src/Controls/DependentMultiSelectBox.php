@@ -33,7 +33,7 @@ class DependentMultiSelectBox extends Nette\Forms\Controls\MultiSelectBox implem
 
 	/**
 	 * @param string $label
-	 * @param array<int, Nette\Forms\IControl> $parents
+	 * @param array<int, Nette\Forms\Control> $parents
 	 */
 	public function __construct($label, array $parents)
 	{
