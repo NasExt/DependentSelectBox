@@ -1,2 +1,7 @@
+run
 .idea
 vendor
+composer.lock
+composer.phar
+tests/tmp
+tests/tests/output
