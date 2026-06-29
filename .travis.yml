@@ -8,6 +8,10 @@ php:
     - 7.3
     - 7.4
     - 8.0
+    - 8.1
+    - 8.2
+    - 8.3
+    - 8.4
 
 install:
     - travis_retry composer install --no-interaction --no-progress

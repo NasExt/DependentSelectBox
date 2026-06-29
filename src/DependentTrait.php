@@ -65,7 +65,7 @@ trait DependentTrait
 
 		$attrs['data-dependentselectbox-parents'] = Nette\Utils\Json::encode($parents);
 		$attrs['data-dependentselectbox-params'] = Nette\Utils\Json::encode($params);
-		$attrs['data-dependentselectbox'] = $form->getPresenter()->link($this->lookupPath('Nette\\Application\\UI\\Presenter') . Nette\ComponentModel\IComponent::NAME_SEPARATOR . self::SIGNAL_NAME . '!');
+		$attrs['data-dependentselectbox'] = $form->getPresenter()->link($this->lookupPath('Nette\\Application\\UI\\Presenter') . Nette\ComponentModel\IComponent::NameSeparator . self::SIGNAL_NAME . '!');
 
 		$control->addAttributes($attrs);
 		return $control;
